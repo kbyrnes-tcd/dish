@@ -1,0 +1,24 @@
+{
+  "name": "dish",
+  "version": "1.0.0",
+  "description": "Dish is a gamified food discovery web app designed to help users try new restaurants in Dublin.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kbyrnes-tcd/dish.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kbyrnes-tcd/dish/issues"
+  },
+  "homepage": "https://github.com/kbyrnes-tcd/dish#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
