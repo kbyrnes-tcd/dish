@@ -13,3 +13,6 @@ app.get("/", function (req, res) {
 app.listen( PORT, () => {
     console.log(`App running on http://localhost:${PORT}`);
 })
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "./views"));
