@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path")
+const mysql = require("mysql");
 const PORT = 8000;
 
 const app = express();
@@ -29,7 +30,7 @@ const connection = mysql.createConnection(DBCONFIG);
 
 connection.connect(function(err) {
     if (err) {
-        console.error("Error connecting to database");
+        console.error("Error connecting to database:", err);
         return;
     }
     console.log("Connected to database");
