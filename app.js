@@ -1,23 +1,4 @@
-const express = require("express");
-const path = require("path")
-const mysql = require("mysql");
-const PORT = 8000;
-
-const app = express();
-
-app.use(express.static(path.join(__dirname, "./assets")));
-
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "/index.html"));
-});
-
-app.listen( PORT, () => {
-    console.log(`App running on http://localhost:${PORT}`);
-})
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "./views"));
-
+// Load environment variables from .env file
 require("dotenv").config();
 const DBCONFIG = {
     host: process.env.DB_HOST,
@@ -26,6 +7,32 @@ const DBCONFIG = {
     password: process.env.DB_PASSWORD
 }
 
+const express = require("express");
+const path = require("path")
+const mysql = require("mysql");
+const QueryBuilder = require("node-querybuilder");
+const pool = new QueryBuilder(DBCONFIG, "mysql", "pool");
+const PORT = 8000;
+const app = express();
+
+// Connect assets folder to serve static files
+app.use(express.static(path.join(__dirname, "./assets")));
+
+// Set up route for home page
+app.get("/", function (req, res) {
+    res.sendFile(path.join(__dirname, "/index.html"));
+});
+
+// Start the server
+app.listen( PORT, () => {
+    console.log(`App running on http://localhost:${PORT}`);
+})
+
+// Set up EJS as the view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "./views"));
+
+// Create a connection to the MySQL database
 const connection = mysql.createConnection(DBCONFIG);
 
 connection.connect(function(err) {
