@@ -24,3 +24,13 @@ const DBCONFIG = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD
 }
+
+const connection = mysql.createConnection(DBCONFIG);
+
+connection.connect(function(err) {
+    if (err) {
+        console.error("Error connecting to database");
+        return;
+    }
+    console.log("Connected to database");
+});
