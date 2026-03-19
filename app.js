@@ -4,7 +4,8 @@ const DBCONFIG = {
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT
 }
 
 const express = require("express");
@@ -31,14 +32,3 @@ app.listen( PORT, () => {
 // Set up EJS as the view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
-
-// Create a connection to the MySQL database
-const connection = mysql.createConnection(DBCONFIG);
-
-connection.connect(function(err) {
-    if (err) {
-        console.error("Error connecting to database:", err);
-        return;
-    }
-    console.log("Connected to database");
-});
