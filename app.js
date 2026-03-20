@@ -8,6 +8,7 @@ const DBCONFIG = {
     port: process.env.DB_PORT
 }
 
+// Import necessary modules
 const express = require("express");
 const path = require("path")
 const mysql = require("mysql");
