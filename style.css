@@ -11,7 +11,11 @@ body {
     flex-direction: column;
     width: 375px; /* mobile phone width */
     min-height: 100vh;
+<<<<<<< HEAD
     background: #F8F8F6;
+=======
+    background: #F7F7FB;
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
 }
 
 h1 {
@@ -39,7 +43,11 @@ p {
 
 .containerHeader {
     padding: 20px 20px 0 20px;
+<<<<<<< HEAD
     border: 1px solid blue;
+=======
+    /* border: 1px solid blue; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
 
 }
 
@@ -51,8 +59,13 @@ p {
 
 .containerMain {
     flex: 1;
+<<<<<<< HEAD
     padding: 20px;
     border: 1px solid blue;
+=======
+    padding: 20px 20px 100px 20px; /* extra bottom padding for fixed footer */
+    /* border: 1px solid blue; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
 }
 
 .feedPost {
@@ -84,34 +97,60 @@ p {
     line-height: .1;
 }
 
+<<<<<<< HEAD
 /* Targeted colors */
 .username {
   color: purple;
+=======
+/* targeted colors */
+.username {
+  /* color: purple; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 700;
 }
 
 .dishNumber {
+<<<<<<< HEAD
   color: blue;
+=======
+  /* color: blue; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 600;
 }
 
 .restaurantName {
+<<<<<<< HEAD
   color: green;
+=======
+  /* color: green; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 500;
 }
 
 .location {
+<<<<<<< HEAD
   color: orange;
+=======
+  /* color: orange; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 500;
 }
 
 .price {
+<<<<<<< HEAD
   color: brown;
+=======
+  /* color: brown; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 500;
 }
 
 .cuisine {
+<<<<<<< HEAD
   color: darkred;
+=======
+  /* color: darkred; */
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
   font-weight: 500;
 }
 
@@ -210,6 +249,7 @@ p {
 /* ----------------- footer content ------------------ */
 
 .containerFooter {
+<<<<<<< HEAD
     height: 80px; /* fixed footer height */
     background-color: #fff;
     display: flex;
@@ -217,3 +257,353 @@ p {
     justify-content: center;
     border: 1px solid blue;
 }
+=======
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 375px;
+    height: 80px; /* fixed footer height */
+    background: #fff;
+    z-index: 1000;
+    /* border: 1px solid blue; */
+}
+
+/* nav styles */
+.footerNav {
+    display: flex;
+    justify-content: space-around; /* space between nav items */
+    align-items: center;
+    height: 100%;
+}
+
+.navItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+    color: #454545;
+    font-size: 12px;
+    gap: 4px;
+}
+
+/* nav icons */
+.navItem img {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+/* active oval bg */
+.navItem.active::before {
+    content: "";
+    position: absolute;
+    width: 64px;
+    height: 32px;
+    background-color: #E7E7FB;
+    border-radius: 20px;
+    bottom: 18px;
+    z-index: 0;
+}
+
+
+/* ----------------- welcome page ------------------ */
+/* ------------------------------------------------- */
+
+.welcomeScreen {
+    position: relative;
+    overflow: hidden;
+    width: 375px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: #F7F7FB;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: solid 1px blue
+}
+
+.welcomeBg {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 375px;
+    height: auto;
+    z-index: 0;
+}
+
+.welcomeLogo,
+.welcomeMascot,
+.welcomeContent {
+    position: relative;
+    z-index: 1;
+}
+
+/* welcome logo */
+.welcomeLogo {
+    width: 145px;
+    height: auto;
+    margin-top: 105px;
+}
+
+/* welcome mascot image */
+.welcomeMascot {
+    width: 315px;
+    height: 245px;
+    margin-top: 45px;
+    object-fit: cover;
+}
+
+/* content section */
+.welcomeContent {
+    margin-top: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border: solid 1px blue
+}
+
+/* Welcome text */
+.welcomeContent h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #454545;
+}
+
+/* Primary button */
+.btnStart {
+    width: 280px;
+    height: 50px;
+    background-color: #FF6128;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Secondary button */
+.btnLogin {
+    width: 280px;
+    height: 50px;
+    background-color: #F7F7FB;
+    color: #454545;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+  
+  
+/* ----------------- profile page styles ------------------ */
+
+.profile-page {
+    background-color: #f8f9fd;
+    color: #333;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-page .mobile-container {
+    width: 100%;
+    max-width: 400px;
+    min-height: 100vh;
+    background-color: #f8f9fd;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+/* profile header */
+.profile-page .header {
+    padding: 20px;
+}
+
+.profile-page .logo {
+    color: #ff6333;
+    font-size: 28px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* user profile section */
+.profile-page .profile-header {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.profile-page .avatar-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.profile-page .avatar-container img {
+    width: 85%;
+    height: auto;
+}
+
+.profile-page .user-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.profile-page .user-email {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+/* xp card */
+.profile-page .xp-card {
+    background-color: #ecedf9;
+    margin: 0 20px;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-page .trophy-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.profile-page .xp-info {
+    flex-grow: 1;
+}
+
+.profile-page .xp-text-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.profile-page .progress-bar-bg {
+    height: 10px;
+    background-color: #d1d1d1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.profile-page .progress-bar-fill {
+    height: 100%;
+    width: 65%;
+    background-color: #ff6333;
+    border-radius: 5px;
+}
+
+/* menu card */
+.profile-page .menu-card {
+    background-color: #ffffff;
+    margin: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.profile-page .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-page .menu-item:last-child {
+    border-bottom: none;
+}
+
+.profile-page .menu-icon {
+    width: 24px;
+    font-size: 18px;
+    margin-right: 15px;
+    color: #555;
+    text-align: center;
+}
+
+.profile-page .menu-text {
+    flex-grow: 1;
+    font-weight: 600;
+    font-size: 15px;
+    position: relative;
+    left: 7px;
+    bottom: 2px;
+}
+
+.profile-page .arrow-icon {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.profile-page .sign-out {
+    text-align: center;
+    padding: 18px;
+    color: #ff6333;
+    font-weight: bold;
+    cursor: pointer;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* bottom navigation */
+.profile-page .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 400px;
+    height: 75px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-page .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #777;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.profile-page .nav-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.profile-page .nav-item.active {
+    color: #333;
+}
+
+.profile-page .nav-item.active .icon-wrapper {
+    background-color: #ececf9;
+    padding: 0 20px;
+    border-radius: 20px;
+    margin-bottom: 2px;
+}
+>>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
