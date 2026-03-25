@@ -12,10 +12,14 @@ const DBCONFIG = {
 // Import necessary modules
 const express = require("express");
 const path = require("path");
-const mysql = require("mysql");
-const QueryBuilder = require("node-querybuilder");
+const mysql = require("mysql2");
 
-const pool = new QueryBuilder(DBCONFIG, "mysql", "pool");
+const pool = mysql.createPool({
+    ...DBCONFIG,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 const PORT = 8000;
 const app = express();
 
@@ -38,7 +42,7 @@ app.get("/api/health", function (req, res) {
 
 // Test database connection
 app.get("/api/test-db", function (req, res) {
-    pool.get_connection(function (err, connection) {
+    pool.getConnection(function (err, connection) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -60,7 +64,7 @@ app.get("/api/test-db", function (req, res) {
 
 // Get all dishes
 app.get("/api/dishes", function (req, res) {
-    pool.get_connection(function (err, connection) {
+    pool.getConnection(function (err, connection) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -74,6 +78,94 @@ app.get("/api/dishes", function (req, res) {
 
             res.json(result);
         });
+    });
+});
+
+// Get all restaurants
+app.get("/api/restaurants", function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        connection.query(
+            "SELECT * FROM restaurants ORDER BY restaurant_name ASC",
+            function (err, result) {
+                connection.release();
+
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(result);
+            }
+        );
+    });
+});
+
+// Get all users
+app.get("/api/users", function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        connection.query(
+            "SELECT * FROM users ORDER BY username ASC",
+            function (err, result) {
+                connection.release();
+
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(result);
+            }
+        );
+    });
+});
+
+// Get all reviews
+app.get("/api/reviews", function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        connection.query(
+            "SELECT * FROM reviews ORDER BY id DESC",
+            function (err, result) {
+                connection.release();
+
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(result);
+            }
+        );
+    });
+});
+
+// Get all user dish assignments
+app.get("/api/user-dishes", function (req, res) {
+    pool.getConnection(function (err, connection) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        connection.query(
+            "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
+            function (err, result) {
+                connection.release();
+
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.json(result);
+            }
+        );
     });
 });
 
