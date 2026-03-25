@@ -1,0 +1,219 @@
+/* ----------------- app styles ------------------ */
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #ccc; /* outside background */
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    width: 375px; /* mobile phone width */
+    min-height: 100vh;
+    background: #F8F8F6;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #454545;
+}
+
+h2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #454545;
+}
+
+p {
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+/* ----------------- header content ------------------ */
+
+.containerHeader {
+    padding: 20px 20px 0 20px;
+    border: 1px solid blue;
+
+}
+
+.feedSearch {
+    margin-top: 8px;
+}
+
+/* ----------------- main content ------------------ */
+
+.containerMain {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid blue;
+}
+
+.feedPost {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1); 
+    /* box shadow adj: horiz. shift, vert. shift, blur radius */
+}
+
+/* ----------------- card profile ------------------ */
+
+.cardProfile {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.profilePic {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.profileText {
+    margin-top: 15px;
+    font-size: 12px;
+    line-height: .1;
+}
+
+/* Targeted colors */
+.username {
+  color: purple;
+  font-weight: 700;
+}
+
+.dishNumber {
+  color: blue;
+  font-weight: 600;
+}
+
+.restaurantName {
+  color: green;
+  font-weight: 500;
+}
+
+.location {
+  color: orange;
+  font-weight: 500;
+}
+
+.price {
+  color: brown;
+  font-weight: 500;
+}
+
+.cuisine {
+  color: darkred;
+  font-weight: 500;
+}
+
+/* ----------------- card images ------------------ */
+
+/* .cardImage {
+        border: 1px solid green;
+} */
+
+.imageCarousel {
+    display: flex;
+    overflow-x: auto; /* horizontal scrolling */
+    gap: 10px; /* space between pics */
+    padding: 0 15px 15px 15px;
+    scroll-behavior: smooth;
+
+    /* Hide scrollbar in firefox */
+    scrollbar-width: none;
+
+    /* Hide scrollbar in IE/edge */
+    -ms-overflow-style: none;
+}
+
+/* hide scrollbar on chrome/safari */
+.imageCarousel::-webkit-scrollbar {
+    display: none;
+}
+
+/* images in carousel */
+.imageCarousel img {
+    width: 115px;
+    height: 115px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0; /* no shrinking */
+    transition: transform 0.2s;
+}
+
+/* ----------------- card rating ------------------ */
+
+.cardRating {
+    display: flex;
+    gap: 20px; /* space bw rating and dish info */
+    align-items: center; /* align children vertically */
+    margin-bottom: 6px;
+}
+
+.rating {
+    display: flex;
+    gap: 4px; /* small space between star and number */
+    background-color: #EEEFE7;
+    border-radius: 4px;
+    padding: 0 6px 0 5px;
+    margin-left: 15px;
+}
+
+.star {
+    width: 17px;
+    height: 17px;
+}
+
+.dishInfo {
+    display: flex;
+    gap: 4px; /* space between dish name and type */
+    align-items: baseline; /* align text on baseline */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.dishName {
+    color: #454545;
+    font-weight: 800;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.dishType {
+    color: #9F9F9F;
+    font-size: 12px; 
+}
+
+/* ----------------- card notes ------------------ */
+
+.cardNotes {
+    padding: 5px 15px 10px 15px;
+}
+
+.notesHeader h2 {
+    margin-bottom: 1px;
+}
+
+.note p {
+    line-height: 1.3;
+}
+
+/* ----------------- footer content ------------------ */
+
+.containerFooter {
+    height: 80px; /* fixed footer height */
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid blue;
+}
