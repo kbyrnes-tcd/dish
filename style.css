@@ -51,7 +51,7 @@ p {
 
 .containerMain {
     flex: 1;
-    padding: 20px;
+    padding: 20px 20px 100px 20px; /* extra bottom padding for fixed footer */
     /* border: 1px solid blue; */
 }
 
@@ -210,11 +210,14 @@ p {
 /* ----------------- footer content ------------------ */
 
 .containerFooter {
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 375px;
     height: 80px; /* fixed footer height */
     background: #fff;
+    z-index: 1000;
     /* border: 1px solid blue; */
 }
 
