@@ -1,18 +1,9 @@
-// Load environment variables from .env file
-require("dotenv").config();
-
-const DBCONFIG = {
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT
-};
 
 // Import necessary modules
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
+const DBCONFIG = require('./utils/DBCONFIG');
 
 const pool = mysql.createPool({
     ...DBCONFIG,
