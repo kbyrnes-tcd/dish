@@ -283,7 +283,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: solid 1px blue;
+        /* border: solid 1px blue; */
 }
 
 .welcomeBg {
@@ -307,25 +307,25 @@ p {
 .welcomeLogo {
     width: 145px;
     height: auto;
-    margin-top: 105px;
+    margin-top: 100px;
 }
 
 /* welcome mascot image */
 .welcomeMascot {
-    width: 315px;
-    height: 245px;
+    width: 260px;
+    height: auto;
     margin-top: 45px;
     object-fit: cover;
 }
 
 /* content section */
 .welcomeContent {
-    margin-top: 140px;
+    margin-top: 135px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    border: solid 1px blue;
+        /* border: solid 1px blue; */
 }
 
 /* Welcome text */
@@ -337,7 +337,7 @@ p {
 
 /* Primary button */
 .btnStart {
-    width: 280px;
+    width: 335px;
     height: 50px;
     background-color: #FF6128;
     color: #fff;
@@ -350,13 +350,14 @@ p {
 
 /* Secondary button */
 .btnLogin {
-    width: 280px;
+    width: 335px;
     height: 50px;
     background-color: #F7F7FB;
     color: #454545;
     border: none;
     border-radius: 25px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
 }
 
