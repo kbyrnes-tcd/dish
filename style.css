@@ -4,6 +4,8 @@ body {
     display: flex;
     justify-content: center;
     background-color: #ccc; /* outside background */
+    
+    overflow-y: scroll; /* prevent scrollbar layout shift */
 }
 
 .app {
