@@ -370,6 +370,8 @@ p {
 
 .dropdown {
     position: relative;
+    margin-bottom: 30px;
+        /* border: 1px solid red; */
 }
 
 .dropdownToggle {
