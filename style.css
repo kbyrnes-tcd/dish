@@ -266,7 +266,7 @@ p {
     height: 32px;
     background-color: #E7E7FB;
     border-radius: 20px;
-    bottom: 18px;
+    bottom: 15px;
     z-index: 0;
 }
 
@@ -362,46 +362,15 @@ p {
 
 /* ----------------- profile page styles ------------------ */
 
-/* I changed to profile page styles that she has originally to match the other pages.*/
-.profile-page {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    background-color: #ccc;
-    color: #333;
-}
-
-.profile-page .mobile-container {
-    display: flex;
-    flex-direction: column;
-    width: 375px;
-    min-height: 100vh;
-    background: #F7F7FB;
-    position: relative;
-    padding-bottom: 100px;
-}
-
-/* profile header */
-.profile-page .header {
-    padding: 20px 20px 0 20px;
-}
-
-.profile-page .logo {
-    color: #ff6333;
-    font-size: 28px;
-    font-weight: bold;
-    font-style: italic;
-    line-height: 1;
-}
 
 /* user profile section */
-.profile-page .profile-header {
+.profile-header {
     text-align: center;
     margin-top: 18px;
     padding: 0 20px;
 }
 
-.profile-page .avatar-container {
+.avatar-container {
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -412,13 +381,13 @@ p {
     justify-content: center;
 }
 
-.profile-page .avatar-container img {
+.avatar-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.profile-page .user-name {
+.user-name {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 24px;
     font-weight: 700;
@@ -426,7 +395,7 @@ p {
     margin-bottom: 5px;
 }
 
-.profile-page .user-email {
+.user-email {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     color: #777;
@@ -435,7 +404,7 @@ p {
 }
 
 /* xp card */
-.profile-page .xp-card {
+.xp-card {
     background-color: #ecedf9;
     margin: 0 20px;
     border-radius: 12px;
@@ -444,18 +413,18 @@ p {
     align-items: center;
 }
 
-.profile-page .trophy-icon {
+.trophy-icon {
     width: 50px;
     height: 50px;
     margin-right: 15px;
     flex-shrink: 0;
 }
 
-.profile-page .xp-info {
+.xp-info {
     flex-grow: 1;
 }
 
-.profile-page .xp-text-row {
+.xp-text-row {
     display: flex;
     justify-content: space-between;
     font-family: Arial, Helvetica, sans-serif;
@@ -465,14 +434,14 @@ p {
     margin-bottom: 8px;
 }
 
-.profile-page .progress-bar-bg {
+.progress-bar-bg {
     height: 10px;
     background-color: #d1d1d1;
     border-radius: 5px;
     overflow: hidden;
 }
 
-.profile-page .progress-bar-fill {
+.progress-bar-fill {
     height: 100%;
     width: 65%;
     background-color: #ff6333;
@@ -480,7 +449,7 @@ p {
 }
 
 /* menu card */
-.profile-page .menu-card {
+.menu-card {
     background-color: #ffffff;
     margin: 25px 20px;
     border-radius: 12px;
@@ -488,7 +457,7 @@ p {
     overflow: hidden;
 }
 
-.profile-page .menu-item {
+.menu-item {
     display: flex;
     align-items: center;
     padding: 18px 20px;
@@ -497,18 +466,18 @@ p {
     border-bottom: 1px solid #f0f0f0;
 }
 
-.profile-page .menu-item img {
+.menu-item img {
     width: 24px;
     height: 24px;
     object-fit: contain;
     flex-shrink: 0;
 }
 
-.profile-page .menu-item:last-child {
+.menu-item:last-child {
     border-bottom: none;
 }
 
-.profile-page .menu-text {
+.menu-text {
     flex-grow: 1;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 600;
@@ -518,12 +487,12 @@ p {
     bottom: 2px;
 }
 
-.profile-page .arrow-icon {
+.arrow-icon {
     font-size: 12px;
     color: #aaa;
 }
 
-.profile-page .sign-out {
+.sign-out {
     text-align: center;
     padding: 18px;
     color: #ff6333;
@@ -533,192 +502,15 @@ p {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* profile header */
-.profile-page .header {
-    padding: 20px;
-}
 
-.profile-page .logo {
-    color: #ff6333;
-    font-size: 28px;
-    font-weight: bold;
-    font-style: italic;
-}
 
-/* user profile section */
-.profile-page .profile-header {
-    text-align: center;
-    margin-top: 10px;
-}
 
-.profile-page .avatar-container {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin: 0 auto 15px;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
 
-.profile-page .avatar-container img {
-    width: 85%;
-    height: auto;
-}
 
-.profile-page .user-name {
-    font-size: 24px;
-    font-weight: 700;
-    color: #444;
-    margin-bottom: 5px;
-}
 
-.profile-page .user-email {
-    font-size: 14px;
-    color: #777;
-    margin-bottom: 25px;
-    font-weight: 500;
-}
 
-/* xp card */
-.profile-page .xp-card {
-    background-color: #ecedf9;
-    margin: 0 20px;
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-}
 
-.profile-page .trophy-icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 15px;
-}
 
-.profile-page .xp-info {
-    flex-grow: 1;
-}
-
-.profile-page .xp-text-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-.profile-page .progress-bar-bg {
-    height: 10px;
-    background-color: #d1d1d1;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.profile-page .progress-bar-fill {
-    height: 100%;
-    width: 65%;
-    background-color: #ff6333;
-    border-radius: 5px;
-}
-
-/* menu card */
-.profile-page .menu-card {
-    background-color: #ffffff;
-    margin: 25px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
-
-.profile-page .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 18px 20px;
-    text-decoration: none;
-    color: #333;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.profile-page .menu-item:last-child {
-    border-bottom: none;
-}
-
-.profile-page .menu-icon {
-    width: 24px;
-    font-size: 18px;
-    margin-right: 15px;
-    color: #555;
-    text-align: center;
-}
-
-.profile-page .menu-text {
-    flex-grow: 1;
-    font-weight: 600;
-    font-size: 15px;
-    position: relative;
-    left: 7px;
-    bottom: 2px;
-}
-
-.profile-page .arrow-icon {
-    font-size: 12px;
-    color: #aaa;
-}
-
-.profile-page .sign-out {
-    text-align: center;
-    padding: 18px;
-    color: #ff6333;
-    font-weight: bold;
-    cursor: pointer;
-    border-top: 1px solid #f0f0f0;
-}
-
-/* bottom navigation */
-.profile-page .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 400px;
-    height: 75px;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #eee;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.profile-page .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #777;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.profile-page .nav-item i {
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-.profile-page .nav-item.active {
-    color: #333;
-}
-
-.profile-page .nav-item.active .icon-wrapper {
-    background-color: #ececf9;
-    padding: 0 20px;
-    border-radius: 20px;
-    margin-bottom: 2px;
-}
 
 /*my dishes page*/
 .myDishesMain {
