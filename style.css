@@ -57,7 +57,6 @@ p {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
-    /* box shadow adj: horiz. shift, vert. shift, blur radius */
 }
 
 /* ----------------- card profile ------------------ */
@@ -504,6 +503,7 @@ p {
 
 /* ----------------- My Dishes page styles ------------------ */
 
+
 .dishCard {
     background: #fff;
     border-radius: 8px;
@@ -513,9 +513,6 @@ p {
 }
 
 .currentDishCard {
-    position: sticky;
-    top: 0;
-    z-index: 10;
     margin-bottom: 25px; /* extra space below current dish card */
 }
 
@@ -551,8 +548,3 @@ p {
     font-weight: 800;
 }
 
-.pastDishCard {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
