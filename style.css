@@ -19,7 +19,7 @@ body {
 
 h1 {
     font-family: 'Poppins', Arial, sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     margin-bottom: 15px;
     color: #454545;
@@ -266,7 +266,7 @@ p {
     height: 32px;
     background-color: #E7E7FB;
     border-radius: 20px;
-    bottom: 15px;
+    bottom: 14px;
     z-index: 0;
 }
 
@@ -361,10 +361,10 @@ p {
 }
 
 /* ----------------- new dish page ------------------ */
-/* ------------------------------------------------- */
+/* -------------------------------------------------- */
 
 .newDishSection{
-    margin-top: 30px;
+    margin-top: 45px;
         /* border: 1px solid blue; */
 }
 
@@ -404,7 +404,7 @@ p {
 /* active state */
 .dropdownToggle:focus {
     outline: none;
-    border-color: #FF8A63;
+    border: 3px solid #FF6128;
 }
 
 /* dropdown menu */
@@ -452,16 +452,6 @@ p {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 /* ----------------- my dishes page ------------------ */
 /* --------------------------------------------------- */
 
@@ -485,7 +475,7 @@ p {
 
 .dishDivider {
     height: 1px;
-    background: #FF8A63;
+    background: #FF6128;
     margin: 14px 0 18px 0;
 }
 
@@ -595,7 +585,7 @@ p {
 .progress-bar-fill {
     height: 100%;
     width: 65%;
-    background-color: #ff6333;
+    background-color: #FF6128;
     border-radius: 5px;
 }
 
@@ -646,7 +636,7 @@ p {
 .sign-out {
     text-align: center;
     padding: 18px;
-    color: #ff6333;
+    color: #FF6128;
     font-weight: 500;
     cursor: pointer;
     border-top: 1px solid #f0f0f0;
