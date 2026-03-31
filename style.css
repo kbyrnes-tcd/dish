@@ -14,26 +14,27 @@ body {
     width: 375px; /* mobile phone width */
     min-height: 100vh;
     background: #F7F7FB;
+    overflow: hidden;
 }
 
 h1 {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    font-weight: 800;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
     margin-bottom: 15px;
     color: #454545;
 }
 
 h2 {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 600;
     margin-bottom: 15px;
     color: #454545;
 }
 
 p {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
 }
 
@@ -86,7 +87,7 @@ p {
 /* targeted colors */
 .username {
     /* color: purple; */
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .dishNumber {
@@ -96,23 +97,15 @@ p {
 
 .restaurantName {
     /* color: green; */
-    font-weight: 500;
+    font-weight: 600;
 }
 
-.location {
-    /* color: orange; */
-    font-weight: 500;
+.location, .price, .cuisine {
+    color: #9F9F9F;
+    font-weight: 200;
+    font-size: 14px;
 }
 
-.price {
-    /* color: brown; */
-    font-weight: 500;
-}
-
-.cuisine {
-    /* color: darkred; */
-    font-weight: 500;
-}
 
 /* ----------------- card images ------------------ */
 
@@ -176,14 +169,14 @@ p {
     display: flex;
     gap: 4px; /* space between dish name and type */
     align-items: baseline; /* align text on baseline */
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
 }
 
 .dishName {
     color: #454545;
-    font-weight: 800;
-    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
 }
 
@@ -388,15 +381,15 @@ p {
 }
 
 .user-name {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: #444;
     margin-bottom: 5px;
 }
 
 .user-email {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
     color: #777;
     margin-bottom: 25px;
@@ -427,9 +420,9 @@ p {
 .xp-text-row {
     display: flex;
     justify-content: space-between;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #555;
     margin-bottom: 8px;
 }
@@ -479,8 +472,8 @@ p {
 
 .menu-text {
     flex-grow: 1;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 600;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 500;
     font-size: 15px;
     position: relative;
     left: 7px;
@@ -496,10 +489,10 @@ p {
     text-align: center;
     padding: 18px;
     color: #ff6333;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
     border-top: 1px solid #f0f0f0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
 }
 
 
@@ -543,10 +536,10 @@ p {
 }
 
 .dishMetaLabel {
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .dishRestaurant {
-    font-weight: 800;
+    font-weight: 600;
 }
 
