@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Your current and past dishes on Dish"/> 
-    <title>Dish Result</title>
-
+    <!--SEO data here in the description-->
+    <meta name="description" content="A public feed for Dish"/> 
+    <title>My Dishes</title>
+    
+    <!--Bootstrap link-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!--CSS link-->
     <link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
-<div class="app">
+<div class="app"> <!--lock to mobile dimensions -->
 
-    <!--Header -->
+    <!--Header content-->
     <div class="containerHeader">
-
         <div class="logo">
             <a href="index.html">
-                <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
+            <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
             </a>
         </div>
     </div>
 
     <!--body -->
-    <div class="containerMain myDishesMain">
-        <div class="myDishesSection">
+    <div class="containerMain">
+            
+            <!--Current dishes -->
             <h1>Your Dish to Try</h1>
-
+            
             <div class="dishCard currentDishCard">
                 <div class="dishCardTop">
                     <p class="dishRestaurant">Pablo Picante’s</p>
@@ -54,91 +58,93 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="myDishesSection pastDishesSection">
+            
+            <!--Past dishes -->
             <h1>Past Dishes</h1>
 
-            <div class="pastDishesList">
-                <!-- Example previous dish -->
-                <div class="dishCard pastDishCard">
-                    <div class="dishCardTop">
-                        <p class="dishRestaurant">Host</p>
-                        <p>Tagliatelle Lamb Ragu</p>
+            <div class="dishCard pastDishCard">
+                <div class="dishCardTop">
+                    <p class="dishRestaurant">Host</p>
+                    <p>Tagliatelle Lamb Ragu</p>
+                    <p>Tiramisu</p>
+                </div>
+                <div class="dishDivider"></div>
+                <div class="dishMeta">
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Cuisine Type</p>
+                        <p>Mexican</p>
+                    </div>
+
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Location</p>
                         <p>Ranelagh</p>
                     </div>
 
-                    <div class="dishDivider"></div>
-
-                    <div class="dishMeta">
-                        <div class="dishMetaItem">
-                            <p class="dishMetaLabel">Cuisine Type</p>
-                            <p>Italian</p>
-                        </div>
-
-                        <div class="dishMetaItem">
-                            <p class="dishMetaLabel">Price Range</p>
-                            <p>€€€</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dishCard pastDishCard">
-                    <div class="dishCardTop">
-                        <p class="dishRestaurant">Alma</p>
-                        <p>Sandwich and Coffee</p>
-                        <p>Portobello</p>
-                    </div>
-
-                    <div class="dishDivider"></div>
-
-                    <div class="dishMeta">
-                        <div class="dishMetaItem">
-                            <p class="dishMetaLabel">Cuisine Type</p>
-                            <p>Argentinian</p>
-                        </div>
-
-                        <div class="dishMetaItem">
-                            <p class="dishMetaLabel">Price Range</p>
-                            <p>€€</p>
-                        </div>
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Price Range</p>
+                        <p>€€€</p>
                     </div>
                 </div>
             </div>
+
+            <div class="dishCard pastDishCard">
+                <div class="dishCardTop">
+                    <p class="dishRestaurant">Alma</p>
+                    <p>Sandwich</p>
+                    <p>Pastry</p>
+                </div>
+                <div class="dishDivider"></div>
+                <div class="dishMeta">
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Cuisine Type</p>
+                        <p>Argentinian</p>
+                    </div>
+
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Location</p>
+                        <p>Portobello</p>
+                    </div>
+
+                    <div class="dishMetaItem">
+                        <p class="dishMetaLabel">Price Range</p>
+                        <p>€€</p>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!--Footer content-->
+    <div class="containerFooter">
+        <div class="footerNav">
+
+            <!-- Feed -->
+            <a href="index.html" class="navItem">
+                <img src="assets/icon-feed.svg" alt="Feed icon">
+                <span>Feed</span>
+            </a>
+
+            <!-- New Dish -->
+            <a href="new-dish.html" class="navItem">
+                <img src="assets/icon-new.svg" alt="New dish icon">
+                <span>New Dish</span>
+            </a>
+
+            <!-- My Dishes -->
+            <a href="my-dishes.html" class="navItem active">
+                <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
+                <span>My Dishes</span>
+            </a>
+
+            <!-- Profile -->
+            <a href="profile.html" class="navItem">
+                <img src="assets/icon-profile.svg" alt="Profile icon">
+                <span>Profile</span>
+            </a>
         </div>
     </div>
 
-    <!-- Footer -->
-   <div class="containerFooter">
-    <div class="footerNav">
-
-        <!-- Feed -->
-        <a href="index.html" class="navItem">
-            <img src="assets/icon-feed.svg" alt="Feed icon">
-            <span>Feed</span>
-        </a>
-
-        <!-- New Dish -->
-        <a href="new-dish.html" class="navItem">
-            <img src="assets/icon-new.svg" alt="New dish icon">
-            <span>New Dish</span>
-        </a>
-
-        <!-- My Dishes -->
-        <a href="my-dishes.html" class="navItem active">
-            <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
-            <span>My Dishes</span>
-        </a>
-
-        <!-- Profile -->
-        <a href="profile.html" class="navItem">
-            <img src="assets/icon-profile.svg" alt="Profile icon">
-            <span>Profile</span>
-        </a>
-    </div>
-</div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</div>
+
+</div> <!--lock to mobile dimensions - close div -->
 </body>
 </html>

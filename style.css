@@ -51,7 +51,6 @@ p {
 .containerMain {
     flex: 1;
     padding: 20px 20px 100px 20px; /* extra bottom padding for fixed footer */
-    /* border: 1px solid blue; */
 }
 
 .feedPost {
@@ -503,55 +502,27 @@ p {
 }
 
 
-
-
-
-
-
-
-
-
-
-/*my dishes page*/
-.myDishesMain {
-    background: #F7F7FB;
-}
-
-.myDishesSection h1 {
-    margin-bottom: 20px;
-}
-
-.currentDishCard {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+/* ----------------- My Dishes page styles ------------------ */
 
 .dishCard {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.08);
     padding: 18px 20px;
+    margin-bottom: 15px;
 }
 
-.pastDishesSection {
-    margin-top: 40px;
-}
-
-.pastDishesList {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.currentDishCard {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 25px; /* extra space below current dish card */
 }
 
 .dishCardTop p {
     margin: 0;
     line-height: 1.4;
     color: #454545;
-}
-
-.dishRestaurant {
-    font-weight: 800;
 }
 
 .dishDivider {
@@ -574,4 +545,14 @@ p {
 
 .dishMetaLabel {
     font-weight: 800;
+}
+
+.dishRestaurant {
+    font-weight: 800;
+}
+
+.pastDishCard {
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
