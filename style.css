@@ -362,7 +362,7 @@ p {
 }
 
 /* ----------------- create acct page ------------------ */
-/* -------------------------------------------------- */
+/* ---------------------------------------------------- */
 
 .createAccountSection {
     margin-top: 45px;
@@ -381,7 +381,6 @@ p {
         /* border: 1px solid red; */
 }
 
-/* Hover and focus states */
 .formInput:hover {
     border-color: #aaa;
 }
@@ -404,7 +403,30 @@ p {
     cursor: pointer;
 }
 
+.questionLogin{
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
 
+.questionLogin p {
+    font-size: 14px;
+    font-weight: 300;
+    color: #454545;
+    margin: 0;
+}
+
+.loginLink {
+    color: #FF6128;
+    text-decoration: none;
+    font-weight: 300;
+    margin-left: 3px;
+    transition: opacity 0.2s;
+}
+
+.loginLink:hover {
+    opacity: 0.7;
+}
 
 /* ----------------- new dish page ------------------ */
 /* -------------------------------------------------- */
