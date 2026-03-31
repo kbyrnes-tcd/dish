@@ -11,11 +11,7 @@ body {
     flex-direction: column;
     width: 375px; /* mobile phone width */
     min-height: 100vh;
-<<<<<<< HEAD
-    background: #F8F8F6;
-=======
     background: #F7F7FB;
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
 }
 
 h1 {
@@ -35,7 +31,7 @@ h2 {
 }
 
 p {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
 }
 
@@ -43,12 +39,7 @@ p {
 
 .containerHeader {
     padding: 20px 20px 0 20px;
-<<<<<<< HEAD
-    border: 1px solid blue;
-=======
     /* border: 1px solid blue; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-
 }
 
 .feedSearch {
@@ -59,19 +50,14 @@ p {
 
 .containerMain {
     flex: 1;
-<<<<<<< HEAD
-    padding: 20px;
-    border: 1px solid blue;
-=======
     padding: 20px 20px 100px 20px; /* extra bottom padding for fixed footer */
     /* border: 1px solid blue; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
 }
 
 .feedPost {
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1); 
+    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
     /* box shadow adj: horiz. shift, vert. shift, blur radius */
 }
 
@@ -97,61 +83,35 @@ p {
     line-height: .1;
 }
 
-<<<<<<< HEAD
-/* Targeted colors */
-.username {
-  color: purple;
-=======
 /* targeted colors */
 .username {
-  /* color: purple; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 700;
+    /* color: purple; */
+    font-weight: 700;
 }
 
 .dishNumber {
-<<<<<<< HEAD
-  color: blue;
-=======
-  /* color: blue; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 600;
+    /* color: blue; */
+    font-weight: 600;
 }
 
 .restaurantName {
-<<<<<<< HEAD
-  color: green;
-=======
-  /* color: green; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 500;
+    /* color: green; */
+    font-weight: 500;
 }
 
 .location {
-<<<<<<< HEAD
-  color: orange;
-=======
-  /* color: orange; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 500;
+    /* color: orange; */
+    font-weight: 500;
 }
 
 .price {
-<<<<<<< HEAD
-  color: brown;
-=======
-  /* color: brown; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 500;
+    /* color: brown; */
+    font-weight: 500;
 }
 
 .cuisine {
-<<<<<<< HEAD
-  color: darkred;
-=======
-  /* color: darkred; */
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
-  font-weight: 500;
+    /* color: darkred; */
+    font-weight: 500;
 }
 
 /* ----------------- card images ------------------ */
@@ -229,7 +189,7 @@ p {
 
 .dishType {
     color: #9F9F9F;
-    font-size: 12px; 
+    font-size: 12px;
 }
 
 /* ----------------- card notes ------------------ */
@@ -249,32 +209,24 @@ p {
 /* ----------------- footer content ------------------ */
 
 .containerFooter {
-<<<<<<< HEAD
-    height: 80px; /* fixed footer height */
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid blue;
-}
-=======
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 375px;
-    height: 80px; /* fixed footer height */
+    height: 80px;
     background: #fff;
     z-index: 1000;
-    /* border: 1px solid blue; */
+    display: flex;
+    align-items: center;
 }
 
-/* nav styles */
 .footerNav {
     display: flex;
-    justify-content: space-around; /* space between nav items */
+    justify-content: space-around;
     align-items: center;
     height: 100%;
+    width: 100%;
 }
 
 .navItem {
@@ -283,19 +235,27 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     text-decoration: none;
     color: #454545;
     font-size: 12px;
     gap: 4px;
+    flex: 1;
+    line-height: 1;
 }
 
-/* nav icons */
+.navItem span {
+    display: block;
+    font-size: 12px;
+    line-height: 1;
+    margin-top: 2px;
+}
+
 .navItem img {
     width: 24px;
     height: 24px;
     position: relative;
     z-index: 1;
+    object-fit: contain;
 }
 
 /* active oval bg */
@@ -310,7 +270,6 @@ p {
     z-index: 0;
 }
 
-
 /* ----------------- welcome page ------------------ */
 /* ------------------------------------------------- */
 
@@ -324,7 +283,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: solid 1px blue
+    border: solid 1px blue;
 }
 
 .welcomeBg {
@@ -366,7 +325,7 @@ p {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    border: solid 1px blue
+    border: solid 1px blue;
 }
 
 /* Welcome text */
@@ -400,24 +359,176 @@ p {
     font-size: 16px;
     cursor: pointer;
 }
-  
-  
-/* ----------------- profile page styles ------------------ */
 
+/* I changed to profile page styles that she has originally to match the other pages.*/
 .profile-page {
-    background-color: #f8f9fd;
-    color: #333;
+    margin: 0;
     display: flex;
     justify-content: center;
+    background-color: #ccc;
+    color: #333;
 }
 
 .profile-page .mobile-container {
-    width: 100%;
-    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    width: 375px;
     min-height: 100vh;
-    background-color: #f8f9fd;
+    background: #F7F7FB;
     position: relative;
-    padding-bottom: 80px;
+    padding-bottom: 100px;
+}
+
+/* profile header */
+.profile-page .header {
+    padding: 20px 20px 0 20px;
+}
+
+.profile-page .logo {
+    color: #ff6333;
+    font-size: 28px;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 1;
+}
+
+/* user profile section */
+.profile-page .profile-header {
+    text-align: center;
+    margin-top: 18px;
+    padding: 0 20px;
+}
+
+.profile-page .avatar-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-page .avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-page .user-name {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.profile-page .user-email {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+/* xp card */
+.profile-page .xp-card {
+    background-color: #ecedf9;
+    margin: 0 20px;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.profile-page .trophy-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.profile-page .xp-info {
+    flex-grow: 1;
+}
+
+.profile-page .xp-text-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.profile-page .progress-bar-bg {
+    height: 10px;
+    background-color: #d1d1d1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.profile-page .progress-bar-fill {
+    height: 100%;
+    width: 65%;
+    background-color: #ff6333;
+    border-radius: 5px;
+}
+
+/* menu card */
+.profile-page .menu-card {
+    background-color: #ffffff;
+    margin: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.profile-page .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-page .menu-item img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.profile-page .menu-item:last-child {
+    border-bottom: none;
+}
+
+.profile-page .menu-text {
+    flex-grow: 1;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    position: relative;
+    left: 7px;
+    bottom: 2px;
+}
+
+.profile-page .arrow-icon {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.profile-page .sign-out {
+    text-align: center;
+    padding: 18px;
+    color: #ff6333;
+    font-weight: bold;
+    cursor: pointer;
+    border-top: 1px solid #f0f0f0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* profile header */
@@ -606,4 +717,67 @@ p {
     border-radius: 20px;
     margin-bottom: 2px;
 }
->>>>>>> 38e4c5945913449ecb4e1057bb48a303db369004
+
+/*my dishes page*/
+.myDishesMain {
+    background: #F7F7FB;
+}
+
+.myDishesSection h1 {
+    margin-bottom: 20px;
+}
+
+.currentDishCard {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.dishCard {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.08);
+    padding: 18px 20px;
+}
+
+.pastDishesSection {
+    margin-top: 40px;
+}
+
+.pastDishesList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dishCardTop p {
+    margin: 0;
+    line-height: 1.4;
+    color: #454545;
+}
+
+.dishRestaurant {
+    font-weight: 800;
+}
+
+.dishDivider {
+    height: 1px;
+    background: #FF8A63;
+    margin: 14px 0 18px 0;
+}
+
+.dishMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dishMetaItem p {
+    margin: 0;
+    line-height: 1.3;
+    color: #454545;
+}
+
+.dishMetaLabel {
+    font-weight: 800;
+}
