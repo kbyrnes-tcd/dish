@@ -9,6 +9,7 @@ body {
 }
 
 .app {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 375px; /* mobile phone width */
@@ -283,7 +284,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: solid 1px blue;
+        /* border: solid 1px blue; */
 }
 
 .welcomeBg {
@@ -307,25 +308,25 @@ p {
 .welcomeLogo {
     width: 145px;
     height: auto;
-    margin-top: 105px;
+    margin-top: 100px;
 }
 
 /* welcome mascot image */
 .welcomeMascot {
-    width: 315px;
-    height: 245px;
+    width: 260px;
+    height: auto;
     margin-top: 45px;
     object-fit: cover;
 }
 
 /* content section */
 .welcomeContent {
-    margin-top: 140px;
+    margin-top: 135px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    border: solid 1px blue;
+        /* border: solid 1px blue; */
 }
 
 /* Welcome text */
@@ -337,7 +338,7 @@ p {
 
 /* Primary button */
 .btnStart {
-    width: 280px;
+    width: 335px;
     height: 50px;
     background-color: #FF6128;
     color: #fff;
@@ -350,14 +351,124 @@ p {
 
 /* Secondary button */
 .btnLogin {
-    width: 280px;
+    width: 335px;
     height: 50px;
     background-color: #F7F7FB;
     color: #454545;
     border: none;
     border-radius: 25px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+}
+
+/* ----------------- loading screen ------------------ */
+
+#loadingScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background-color: #FF6128;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+.loadingLogo {
+    width: 225px;
+    height: auto;
+}
+
+/* ----------------- create acct page ------------------ */
+/* -----------------------------------------------------*/
+
+.createAccountSection {
+    margin-top: 45px;
+}
+
+.formInput {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #79747E;
+    padding: 0 15px;
+    font-size: 14px;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    transition: border-color 0.25s ease;
+        /* border: 1px solid red; */
+}
+
+.formInput:hover {
+    border-color: #aaa;
+}
+
+.formInput:focus {
+    outline: none;
+    border: 3px solid #FF6128;
+}
+
+.formButton {
+    width: 335px;
+    height: 50px;
+    margin-top: 10px;
+    background-color: #FF6128;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.questionLogin{
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.questionLogin p {
+    font-size: 14px;
+    font-weight: 300;
+    color: #454545;
+    margin: 0;
+}
+
+.loginLink {
+    color: #FF6128;
+    text-decoration: none;
+    font-weight: 300;
+    margin-left: 3px;
+    transition: opacity 0.2s;
+}
+
+.loginLink:hover {
+    opacity: 0.7;
+}
+
+/* -------------------- login page -------------------- */
+/* -----------------------------------------------------*/
+
+.forgotPassword {
+    text-align: left;
+    padding-left: 15px;
+    margin-top: -25px;
+    margin-bottom: 30px;
+}
+
+.forgotPasswordLink {
+    font-size: 12px;
+    font-weight: 300;
+    color: #878787;
+    transition: opacity 0.2s;
+}
+
+.forgotPasswordLink:hover {
+    opacity: 0.7;
 }
 
 /* ----------------- new dish page ------------------ */

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--SEO data here in the description-->
+    <meta name="description" content="Create an account on Dish"/> 
+    <title>Create an Account</title>
+    
+    <!--Bootstrap link-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!--CSS link-->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+<div class="app"> <!--lock to mobile dimensions-->
+
+    <!--Header content-->
+    <div class="containerHeader">
+        <div class="logo">
+            <a href="index.html">
+            <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
+            </a>
+        </div>
+    </div>
+
+    <!--Main content-->
+    <div class="containerMain"> 
+
+        <section class="createAccountSection">
+            <h1>Create an Account</h1>
+
+            <p class="subtitle">
+                Start your profile to begin discovering dishes, sharing reviews, and earning rewards.
+            </p>
+
+            <!--input fields-->
+            <div class="inputGroup">
+                <input type="text" class="formInput" placeholder="Enter your first name" id="firstName">
+            </div>
+
+            <div class="inputGroup">
+                <input type="email" class="formInput" placeholder="Enter your email" id="email">
+            </div>
+
+            <div class="inputGroup">
+                <input type="password" class="formInput" placeholder="Create a password" id="password">
+            </div>
+
+            <div class="inputGroup">
+                <input type="password" class="formInput" placeholder="Confirm password" id="confirmPassword">
+            </div>
+
+            <!--submit button-->
+            <button class="formButton" id="createAccountBtn">Create Account</button>
+        </section>
+
+        <div class="questionLogin">
+            <p>
+                Already have an account? 
+                <a href="login.html" class="loginLink">Login</a>
+            </p>
+        </div>
+
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="create-account.js"></script>
+
+</div> <!--div close: lock to mobile dimensions-->
+</body>
+</html>
