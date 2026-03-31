@@ -28,7 +28,50 @@
     </div>
 
     <!--Main content-->
-    
+    <div class="containerMain"> 
+
+        <div class="newDishSection">
+            <h1>Try a New Dish</h1>
+
+            <p class="subtitle">
+                Choose your preferences, and we’ll find a dish worth trying.
+            </p>
+
+            <div class="dropdown">
+                <button class="dropdownToggle">
+                    <span class="dropdownLabel">All Cuisines</span>
+                    <span class="caret"></span>
+                </button>
+
+                <div class="dropdownMenu">
+                    <label class="dropdownItem">
+                        <input type="checkbox" checked id="selectAll">
+                        Select All Cuisines
+                    </label>
+
+                    <div class="dropdownDivider"></div>
+
+                    <label class="dropdownItem">
+                        <input type="checkbox"> Italian
+                    </label>
+                    <label class="dropdownItem">
+                        <input type="checkbox"> Mexican
+                    </label>
+                    <label class="dropdownItem">
+                        <input type="checkbox"> Japanese
+                    </label>
+                    <label class="dropdownItem">
+                        <input type="checkbox"> Indian
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
 
     <!--Footer content-->
     <div class="containerFooter">
@@ -62,7 +105,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
+    <script src="interaction.js"></script>
 
 </div> <!--div close: lock to mobile dimensions-->
 </body>
