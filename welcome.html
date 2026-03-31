@@ -16,24 +16,35 @@
 </head>
 
 <body>
-    <div class="welcomeScreen">
-
-        <!--background svg-->
-        <img src="assets/welcome-bg.png" alt="welcome screen background" class="welcomeBg">
-         
-        <!--logo-->
-        <img src="assets/dish-logo.png" alt="Dish logo" class="welcomeLogo">
-
-        <!--mascot-->
-        <img src="assets/mascot-1.png" alt="Dish mascot, a turtle revealing a shell full of food" class="welcomeMascot">   
-
-        <!--welcome content-->
-        <div class="welcomeContent">
-            <h1>Welcome</h1>
-            <a href="create-account.html"><button class="btnStart">Get Started</button></a>
-            
-            <a href="login.html"><button class="btnLogin">Login</button></a>
+    <div class="app">
+        <!-- Loading screen -->
+        <div id="loadingScreen">
+            <img src="assets/dish-logo-3.png" alt="Dish Logo" class="loadingLogo">
         </div>
+
+        <div class="welcomeScreen">
+
+            <!--background svg-->
+            <img src="assets/welcome-bg.png" alt="welcome screen background" class="welcomeBg">
+            
+            <!--logo-->
+            <img src="assets/dish-logo.png" alt="Dish logo" class="welcomeLogo">
+
+            <!--mascot-->
+            <img src="assets/mascot-1.png" alt="Dish mascot, a turtle revealing a shell full of food" class="welcomeMascot">   
+
+            <!--welcome content-->
+            <div class="welcomeContent">
+                <h1>Welcome</h1>
+                <a href="create-account.html"><button class="btnStart">Get Started</button></a>
+                
+                <a href="login.html"><button class="btnLogin">Login</button></a>
+            </div>
+        </div>
+
+        <!--Loading screen JS link-->
+        <script src="loading.js"></script>
 
     </div>
 </body>
+</html>
