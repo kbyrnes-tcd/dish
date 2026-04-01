@@ -386,6 +386,17 @@ p {
 /* ----------------- create acct page ------------------ */
 /* -----------------------------------------------------*/
 
+.skipLinkContainer{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.skipLink{
+    text-decoration: none;
+    color: #878787;
+}
+
 .createAccountSection {
     margin-top: 45px;
 }
@@ -434,7 +445,7 @@ p {
 .questionLogin p {
     font-size: 14px;
     font-weight: 300;
-    color: #454545;
+    color: #878787;
     margin: 0;
 }
 
