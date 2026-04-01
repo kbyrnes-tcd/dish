@@ -52,8 +52,49 @@ p {
     /* border: 1px solid blue; */
 }
 
-.feedSearch {
-    margin-top: 8px;
+/* ------------------ search bar ------------------- */
+
+.customSearch {
+    position: relative;
+    width: 335px;
+    height: 35px;
+    margin-top: 15px;
+}
+
+.customSearch input {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    border: none;
+    background-color: #E7E7FB;
+    padding: 0 40px 0 15px; /* space for icon on right */
+    font-size: 14px;
+    outline: none;
+}
+
+.customSearch input::placeholder {
+    color: #777;
+}
+
+/* search icon */
+.customSearch button {
+    position: absolute;
+    right: 10px;
+    top:45%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.customSearch button img {
+    width: 18px;
+    height: auto;
+}
+
+.customSearch button:hover {
+    opacity: 0.7;
 }
 
 /* ----------------- main content ------------------ */
@@ -386,6 +427,17 @@ p {
 /* ----------------- create acct page ------------------ */
 /* -----------------------------------------------------*/
 
+.skipLinkContainer{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.skipLink{
+    text-decoration: none;
+    color: #878787;
+}
+
 .createAccountSection {
     margin-top: 45px;
 }
@@ -434,7 +486,7 @@ p {
 .questionLogin p {
     font-size: 14px;
     font-weight: 300;
-    color: #454545;
+    color: #878787;
     margin: 0;
 }
 
@@ -732,15 +784,23 @@ p {
     border-bottom: 1px solid #f0f0f0;
 }
 
+/* sign out positioning*/
+.menu-item-sign-out{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #FF6128;
+    font-weight: 500;
+    cursor: pointer;
+}
+
 .menu-item img {
     width: 24px;
     height: 24px;
     object-fit: contain;
     flex-shrink: 0;
-}
-
-.menu-item:last-child {
-    border-bottom: none;
 }
 
 .menu-text {
@@ -749,21 +809,10 @@ p {
     font-weight: 500;
     font-size: 15px;
     position: relative;
-    left: 7px;
-    bottom: 2px;
+    left: 10px;
 }
 
 .arrow-icon {
     font-size: 12px;
     color: #aaa;
-}
-
-.sign-out {
-    text-align: center;
-    padding: 18px;
-    color: #FF6128;
-    font-weight: 500;
-    cursor: pointer;
-    border-top: 1px solid #f0f0f0;
-    font-family: 'Poppins', Arial, sans-serif;
 }
