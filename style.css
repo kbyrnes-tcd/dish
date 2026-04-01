@@ -803,18 +803,13 @@ p {
     flex-shrink: 0;
 }
 
-.menu-item:last-child {
-    border-bottom: none;
-}
-
 .menu-text {
     flex-grow: 1;
     font-family: 'Poppins', Arial, sans-serif;
     font-weight: 500;
     font-size: 15px;
     position: relative;
-    left: 7px;
-    bottom: 2px;
+    left: 10px;
 }
 
 .arrow-icon {
