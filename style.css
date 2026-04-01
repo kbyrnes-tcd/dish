@@ -52,7 +52,7 @@ p {
     /* border: 1px solid blue; */
 }
 
-/* ----------------- search bar ------------------ */
+/* ------------------ search bar ------------------- */
 
 .customSearch {
     position: relative;
@@ -784,6 +784,18 @@ p {
     border-bottom: 1px solid #f0f0f0;
 }
 
+/* sign out positioning*/
+.menu-item-sign-out{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #FF6128;
+    font-weight: 500;
+    cursor: pointer;
+}
+
 .menu-item img {
     width: 24px;
     height: 24px;
@@ -808,14 +820,4 @@ p {
 .arrow-icon {
     font-size: 12px;
     color: #aaa;
-}
-
-.sign-out {
-    text-align: center;
-    padding: 18px;
-    color: #FF6128;
-    font-weight: 500;
-    cursor: pointer;
-    border-top: 1px solid #f0f0f0;
-    font-family: 'Poppins', Arial, sans-serif;
 }
