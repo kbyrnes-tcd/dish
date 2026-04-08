@@ -44,25 +44,25 @@
                     <span class="caret"></span>
                 </button>
 
-                <div class="dropdownMenu">
+                <div class="dropdownMenu" id="cuisineDropdown">
                     <label class="dropdownItem">
-                        <input type="checkbox" checked class="selectAll">
+                        <input type="checkbox" class="selectAll">
                         Select All Cuisines
                     </label>
 
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox"> Italian
+                        <input type="checkbox" value="Italian"> Italian
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Mexican
+                        <input type="checkbox" value="Mexican"> Mexican
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Japanese
+                        <input type="checkbox" value="Japanese"> Japanese
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Indian
+                        <input type="checkbox" value="Indian"> Indian
                     </label>
                 </div>
             </div>
@@ -74,25 +74,25 @@
                     <span class="caret"></span>
                 </button>
 
-                <div class="dropdownMenu">
+                <div class="dropdownMenu" id="locationDropdown">
                     <label class="dropdownItem">
-                        <input type="checkbox" checked class="selectAll">
+                        <input type="checkbox" class="selectAll">
                         Select All Locations
                     </label>
 
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox"> Ranelagh
+                        <input type="checkbox" value="Ranelagh"> Ranelagh
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Rathmines
+                        <input type="checkbox" value="Rathmines"> Rathmines
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Stoneybatter
+                        <input type="checkbox" value="Stoneybatter"> Stoneybatter
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> Phibsboro
+                        <input type="checkbox" value="Phibsboro"> Phibsboro
                     </label>
                 </div>
             </div>
@@ -104,22 +104,22 @@
                     <span class="caret"></span>
                 </button>
 
-                <div class="dropdownMenu">
+                <div class="dropdownMenu" id="priceDropdown">
                     <label class="dropdownItem">
-                        <input type="checkbox" checked class="selectAll">
+                        <input type="checkbox" class="selectAll">
                         Select All Price Ranges
                     </label>
 
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox"> €
+                        <input type="checkbox" value="€10-€20"> €
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> €€
+                        <input type="checkbox" value="€20-€30"> €€
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox"> €€€
+                        <input type="checkbox" value="€30-€40"> €€€
                     </label>
                 </div>
             </div>
@@ -131,28 +131,31 @@
                     <span class="caret"></span>
                 </button>
 
-                <div class="dropdownMenu">
+                <div class="dropdownMenu" id="courseDropdown">
                     <label class="dropdownItem">
-                        <input type="checkbox" checked class="selectAll">
+                        <input type="checkbox" class="selectAll">
                         Select All Course Types
                     </label>
 
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox"> Starter
+                        <input type="checkbox" value="Entree"> Entree
                     </label>
-                    <label class="dropdownItem">
+                    
+                    <!-- <label class="dropdownItem">
                         <input type="checkbox"> Main
                     </label>
                     <label class="dropdownItem">
                         <input type="checkbox"> Dessert
-                    </label>
+                    </label> -->
                 </div>
             </div>
 
-            <button class="btnFindDish">Find a Dish</button>
-
+            <button id="getDishBtn" class="btnFindDish">Find a Dish</button>
+            
+            <!--DISPLAY RESULTS-->
+            <div id="dishResult" class="mt-3"></div>
         </div>
     </div>
 
