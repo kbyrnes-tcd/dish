@@ -12,7 +12,7 @@
     
     <!--CSS link-->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="/style.css"/>
 </head>
 
 <body>
@@ -39,7 +39,7 @@
 
             <!--Cuisine dropdown-->
             <div class="dropdown">
-                <button class="dropdownToggle">
+                <button type="button" class="dropdownToggle">
                     <span class="dropdownLabel">Select Cuisine(s)</span>
                     <span class="caret"></span>
                 </button>
@@ -53,7 +53,7 @@
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox" value="Italian"> Italian
+                        <input type="checkbox" value="American"> American
                     </label>
                     <label class="dropdownItem">
                         <input type="checkbox" value="Mexican"> Mexican
@@ -69,7 +69,7 @@
 
             <!--Location dropdown-->
             <div class="dropdown">
-                <button class="dropdownToggle">
+                <button type="button" class="dropdownToggle">
                     <span class="dropdownLabel">Select Location(s)</span>
                     <span class="caret"></span>
                 </button>
@@ -83,23 +83,23 @@
                     <div class="dropdownDivider"></div>
 
                     <label class="dropdownItem">
-                        <input type="checkbox" value="Ranelagh"> Ranelagh
+                        <input type="checkbox" value="Jervis St"> Jervis St
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox" value="Rathmines"> Rathmines
+                        <input type="checkbox" value="South Great George's Street"> South Great George's Street
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox" value="Stoneybatter"> Stoneybatter
+                        <input type="checkbox" value="Dublin 1"> Dublin 1
                     </label>
                     <label class="dropdownItem">
-                        <input type="checkbox" value="Phibsboro"> Phibsboro
+                        <input type="checkbox" value="Dublin 2"> Dublin 2
                     </label>
                 </div>
             </div>
 
             <!--Price Range dropdown-->
             <div class="dropdown">
-                <button class="dropdownToggle">
+                <button type="button"class="dropdownToggle">
                     <span class="dropdownLabel">Select Price Range</span>
                     <span class="caret"></span>
                 </button>
@@ -126,7 +126,7 @@
 
             <!--Course Type dropdown-->
             <div class="dropdown">
-                <button class="dropdownToggle">
+                <button type="button"class="dropdownToggle">
                     <span class="dropdownLabel">Select Course Type</span>
                     <span class="caret"></span>
                 </button>
@@ -152,7 +152,7 @@
                 </div>
             </div>
 
-            <button id="getDishBtn" class="btnFindDish">Find a Dish</button>
+            <button type="button"id="getDishBtn" class="btnFindDish">Find a Dish</button>
             
             <!--DISPLAY RESULTS-->
             <div id="dishResult" class="mt-3"></div>
@@ -165,26 +165,26 @@
     <div class="footerNav">
 
         <!-- Feed -->
-        <a href="index.html" class="navItem">
-            <img src="assets/icon-feed.svg" alt="Feed icon">
+        <a href="/index.html" class="navItem">
+            <img src="/assets/icon-feed.svg" alt="Feed icon">
             <span>Feed</span>
         </a>
 
         <!-- New Dish -->
-        <a href="new-dish.html" class="navItem active">
-            <img src="assets/icon-new.svg" alt="New dish icon">
+        <a href="/new-dish.html" class="navItem active">
+            <img src="/assets/icon-new.svg" alt="New dish icon">
             <span>New Dish</span>
         </a>
 
         <!-- My Dishes -->
-        <a href="my-dishes.html" class="navItem">
-            <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
+        <a href="/my-dishes.html" class="navItem">
+            <img src="/assets/icon-my-dishes.svg" alt="My dishes icon">
             <span>My Dishes</span>
         </a>
 
         <!-- Profile -->
-        <a href="profile.html" class="navItem">
-            <img src="assets/icon-profile.svg" alt="Profile icon">
+        <a href="/profile.html" class="navItem">
+            <img src="/assets/icon-profile.svg" alt="Profile icon">
             <span>Profile</span>
         </a>
     </div>
@@ -192,7 +192,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="interaction.js"></script>
+    <script src="/interaction.js"></script>
 
 </div> <!--div close: lock to mobile dimensions-->
 </body>

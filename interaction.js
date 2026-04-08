@@ -17,7 +17,6 @@ dropdowns.forEach(dropdown => {
         return 'All selected';
     }
 
-    //-------------------------- toggle open/close ----------------------------//
     toggle.addEventListener('click', (e) => {
         e.stopPropagation();
 
@@ -28,14 +27,12 @@ dropdowns.forEach(dropdown => {
         dropdown.classList.toggle('open');
     });
 
-    //-------------------------- outside click close ----------------------------//
     document.addEventListener('click', (e) => {
         if (!dropdown.contains(e.target)) {
             dropdown.classList.remove('open');
         }
     });
 
-    //----------------------- dropdown label logic -----------------------//
     function updateLabel() {
         const selected = [...checkboxes].filter(cb => cb.checked);
         const allLabel = getAllLabel(defaultText);
@@ -64,7 +61,6 @@ dropdowns.forEach(dropdown => {
         }
     }
 
-    //---------------------- select all logic ------------------------//
     selectAll.addEventListener('change', () => {
         checkboxes.forEach(cb => {
             cb.checked = selectAll.checked;
@@ -79,7 +75,6 @@ dropdowns.forEach(dropdown => {
         });
     });
 
-    // make sure each dropdown starts empty
     selectAll.checked = false;
     selectAll.indeterminate = false;
     checkboxes.forEach(cb => {
@@ -94,7 +89,6 @@ dropdowns.forEach(dropdown => {
 const getDishBtn = document.getElementById("getDishBtn");
 
 getDishBtn.addEventListener("click", async () => {
-
     function getSelectedValues(dropdownId) {
         const checkboxes = document.querySelectorAll(
             `#${dropdownId} input[type="checkbox"]:not(.selectAll)`
@@ -105,7 +99,6 @@ getDishBtn.addEventListener("click", async () => {
             .map(cb => cb.value);
     }
 
-    //get selected values
     const cuisines = getSelectedValues("cuisineDropdown");
     const locations = getSelectedValues("locationDropdown");
     const prices = getSelectedValues("priceDropdown");
@@ -118,33 +111,59 @@ getDishBtn.addEventListener("click", async () => {
         courses
     });
 
+    const requestBody = {
+        cuisine: cuisines[0] || null,
+        location: locations[0] || null,
+        price_range: prices[0] || null,
+        course_type: courses[0] || null
+    };
+
+    console.log("Request body:", requestBody);
+
     try {
-        const response = await fetch("http://localhost:8000/api/dishes/recommend", {
+        console.log("About to fetch recommendation...");
+
+        const response = await fetch("http://127.0.0.1:8000/api/dishes/recommend", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                cuisine: cuisines[0], //send first selected WILL NEED TO UPDATE
-                location: locations[0],
-                price_range: prices[0],
-                course_type: courses[0]
-            })
+            body: JSON.stringify(requestBody)
         });
 
-        const data = await response.json();
+        console.log("Response status:", response.status);
 
-        if (!response.ok) {
-            throw new Error(data.message || "No dishes found");
+        const text = await response.text();
+        console.log("Raw response text:", text);
+
+        let data = null;
+
+        try {
+            data = text ? JSON.parse(text) : null;
+        } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            throw new Error("Server returned an invalid response");
         }
 
-        displayDish(data);
+        if (!response.ok) {
+            throw new Error(data?.message || data?.error || "No dishes found");
+        }
+
+        //displayDish(data);
+
+        //save dish to localStorage
+        localStorage.setItem("currentDish", JSON.stringify(data));
+
+        //redirect to My Dishes page
+        window.location.href = "my-dishes.html";
+
 
     } catch (err) {
-        console.error(err);
-        displayError(err.message);
+        console.error("Fetch error:", err);
+        displayError(err.message || "Network error");
     }
 });
+
 
 //------------------------ display result ---------------------------//
 
@@ -169,84 +188,3 @@ function displayError(message) {
         <p style="color:red;">${message}</p>
     `;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//-------------------- ARCHIVE --------------------//
-
-// //-------------------------- dropdown logic ----------------------------//
-
-// const dropdown = document.querySelector('.dropdown');
-// const toggle = document.querySelector('.dropdownToggle');
-// const menu = document.querySelector('.dropdownMenu');
-// const label = document.querySelector('.dropdownLabel');
-// const selectAll = document.getElementById('selectAll');
-// const checkboxes = menu.querySelectorAll('input[type="checkbox"]:not(#selectAll)');
-
-// //toggle open/close
-// toggle.addEventListener('click', (e) => {
-//     e.stopPropagation(); // prevent triggering document click
-//     dropdown.classList.toggle('open');
-// });
-
-// //outside click close
-// document.addEventListener('click', (e) => {
-//     if (!dropdown.contains(e.target)) {
-//         dropdown.classList.remove('open');
-//     }
-// });
-
-
-// //----------------------- dropdown label logic -----------------------//
-
-// function updateLabel() {
-//     const selected = [...checkboxes].filter(cb => cb.checked);
-
-//     if (selected.length === checkboxes.length) {
-//         //all selected
-//         label.textContent = "All Cuisines";
-//         selectAll.checked = true;
-
-//     } else if (selected.length === 0) {
-//         //none selected
-//         label.textContent = "Select Cuisines";
-//         selectAll.checked = false;
-
-//     } else if (selected.length <= 2) {
-//         //1–2: show names
-//         label.textContent = selected
-//             .map(cb => cb.parentElement.textContent.trim())
-//             .join(', ');
-//         selectAll.checked = false;
-
-//     } else {
-//         //more than 3: show count
-//         label.textContent = `${selected.length} selected`;
-//         selectAll.checked = false;
-//     }
-// }
-
-// //---------------------- select all logic ------------------------//
-
-// selectAll.addEventListener('change', () => {
-//     checkboxes.forEach(cb => cb.checked = selectAll.checked);
-//     updateLabel();
-// });
-
-// checkboxes.forEach(cb => {
-//     cb.addEventListener('change', () => {
-//         selectAll.checked = [...checkboxes].every(c => c.checked);
-//         updateLabel();
-//     });
-// });

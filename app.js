@@ -1,9 +1,14 @@
-
-// Import necessary modules
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
-const DBCONFIG = require('./utils/DBCONFIG');
+const DBCONFIG = require("./utils/DBCONFIG");
+
+const app = express();
+
+//DEBUG
+console.log("APP FILE LOADED - RECOMMEND ROUTE VERSION");
+
+const PORT = 8000;
 
 const pool = mysql.createPool({
     ...DBCONFIG,
@@ -11,161 +16,138 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-const PORT = 8000;
-const app = express();
 
-//add CORS
-const cors = require("cors");
-app.use(cors());
+// Allow requests from Live Server frontend
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+
+    next();
+});
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use(express.static(path.join(__dirname, "./assets")));
+app.use("/assets", express.static(path.join(__dirname, "assets")));
+app.use(express.static(__dirname));
 
-// Home route
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "/index.html"));
+// Pages
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/new-dish.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "new-dish.html"));
+});
+
+app.get("/style.css", (req, res) => {
+    res.sendFile(path.join(__dirname, "style.css"));
+});
+
+app.get("/interaction.js", (req, res) => {
+    res.sendFile(path.join(__dirname, "interaction.js"));
 });
 
 // API health check
-app.get("/api/health", function (req, res) {
+app.get("/api/health", (req, res) => {
     res.json({ message: "API is running" });
 });
 
 // Test database connection
-app.get("/api/test-db", function (req, res) {
-    pool.getConnection(function (err, connection) {
+app.get("/api/test-db", (req, res) => {
+    pool.query("SELECT 1 AS test", (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
 
-        connection.query("SELECT 1 AS test", function (err, result) {
-            connection.release();
-
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
-
-            res.json({
-                message: "Database connection successful",
-                result: result
-            });
+        res.json({
+            message: "Database connection successful",
+            result
         });
     });
 });
 
 // Get all dishes
-app.get("/api/dishes", function (req, res) {
-    pool.getConnection(function (err, connection) {
+app.get("/api/dishes", (req, res) => {
+    pool.query("SELECT * FROM dishes", (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
 
-        connection.query("SELECT * FROM dishes", function (err, result) {
-            connection.release();
-
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
-
-            res.json(result);
-        });
+        res.json(results);
     });
 });
 
 // Get all restaurants
-app.get("/api/restaurants", function (req, res) {
-    pool.getConnection(function (err, connection) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        connection.query(
-            "SELECT * FROM restaurants ORDER BY restaurant_name ASC",
-            function (err, result) {
-                connection.release();
-
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-
-                res.json(result);
+app.get("/api/restaurants", (req, res) => {
+    pool.query(
+        "SELECT * FROM restaurants ORDER BY restaurant_name ASC",
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
-        );
-    });
+
+            res.json(results);
+        }
+    );
 });
 
 // Get all users
-app.get("/api/users", function (req, res) {
-    pool.getConnection(function (err, connection) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        connection.query(
-            "SELECT * FROM users ORDER BY username ASC",
-            function (err, result) {
-                connection.release();
-
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-
-                res.json(result);
+app.get("/api/users", (req, res) => {
+    pool.query(
+        "SELECT * FROM users ORDER BY username ASC",
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
-        );
-    });
+
+            res.json(results);
+        }
+    );
 });
 
 // Get all reviews
-app.get("/api/reviews", function (req, res) {
-    pool.getConnection(function (err, connection) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        connection.query(
-            "SELECT * FROM reviews ORDER BY id DESC",
-            function (err, result) {
-                connection.release();
-
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-
-                res.json(result);
+app.get("/api/reviews", (req, res) => {
+    pool.query(
+        "SELECT * FROM reviews ORDER BY id DESC",
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
-        );
-    });
+
+            res.json(results);
+        }
+    );
 });
 
 // Get all user dish assignments
-app.get("/api/user-dishes", function (req, res) {
-    pool.getConnection(function (err, connection) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        connection.query(
-            "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
-            function (err, result) {
-                connection.release();
-
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-
-                res.json(result);
+app.get("/api/user-dishes", (req, res) => {
+    pool.query(
+        "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
             }
-        );
-    });
+
+            res.json(results);
+        }
+    );
 });
 
-//add new route for get dish recommendation
-app.post("/api/dishes/recommend", function (req, res) {
+// Recommend a dish
+console.log("About to register /api/dishes/recommend route");
+
+app.post("/api/dishes/recommend", (req, res) => {
+    console.log("recommend route hit");
+    console.log("body received:", req.body);
+
     const { cuisine, location, price_range, course_type } = req.body;
 
     let query = `
@@ -207,7 +189,10 @@ app.post("/api/dishes/recommend", function (req, res) {
 
     query += " ORDER BY RAND() LIMIT 1";
 
-    pool.query(query, values, function (err, results) {
+    console.log("query:", query);
+    console.log("values:", values);
+
+    pool.query(query, values, (err, results) => {
         if (err) {
             console.error("Recommendation query error:", err);
             return res.status(500).json({ error: err.message });
@@ -221,12 +206,6 @@ app.post("/api/dishes/recommend", function (req, res) {
     });
 });
 
-
-// Start server
 app.listen(PORT, () => {
-    console.log(`App running on http://localhost:${PORT}`);
+    console.log(`App running on http://127.0.0.1:${PORT}`);
 });
-
-// View engine
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "./views"));
