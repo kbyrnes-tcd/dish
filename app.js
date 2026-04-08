@@ -14,6 +14,10 @@ const pool = mysql.createPool({
 const PORT = 8000;
 const app = express();
 
+//add CORS
+const cors = require("cors");
+app.use(cors());
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -159,6 +163,64 @@ app.get("/api/user-dishes", function (req, res) {
         );
     });
 });
+
+//add new route for get dish recommendation
+app.post("/api/dishes/recommend", function (req, res) {
+    const { cuisine, location, price_range, course_type } = req.body;
+
+    let query = `
+        SELECT 
+            d.id AS dish_id,
+            d.dish_name,
+            r.restaurant_name,
+            r.restaurant_location,
+            r.restaurant_price,
+            r.restaurant_cuisine,
+            rd.course_type
+        FROM restaurants_dishes rd
+        JOIN dishes d ON rd.dishes_id = d.id
+        JOIN restaurants r ON rd.restaurant_id = r.id
+        WHERE 1=1
+    `;
+
+    const values = [];
+
+    if (cuisine) {
+        query += " AND r.restaurant_cuisine = ?";
+        values.push(cuisine);
+    }
+
+    if (location) {
+        query += " AND r.restaurant_location LIKE ?";
+        values.push(`%${location}%`);
+    }
+
+    if (price_range) {
+        query += " AND r.restaurant_price = ?";
+        values.push(price_range);
+    }
+
+    if (course_type) {
+        query += " AND rd.course_type = ?";
+        values.push(course_type);
+    }
+
+    query += " ORDER BY RAND() LIMIT 1";
+
+    pool.query(query, values, function (err, results) {
+        if (err) {
+            console.error("Recommendation query error:", err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No dishes found" });
+        }
+
+        res.json(results[0]);
+    });
+});
+
 
 // Start server
 app.listen(PORT, () => {
