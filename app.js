@@ -1,14 +1,13 @@
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
+const bcrypt = require("bcrypt");
 const DBCONFIG = require("./utils/DBCONFIG");
 
 const app = express();
-
-//DEBUG
-console.log("APP FILE LOADED - RECOMMEND ROUTE VERSION");
-
 const PORT = 8000;
+
+console.log("APP FILE LOADED");
 
 const pool = mysql.createPool({
     ...DBCONFIG,
@@ -17,7 +16,7 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// Allow requests from Live Server frontend
+// allow requests from Live Server frontend
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -30,15 +29,16 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware
+// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
+// static files
 app.use("/assets", express.static(path.join(__dirname, "assets")));
+app.use("/js", express.static(path.join(__dirname, "js")));
 app.use(express.static(__dirname));
 
-// Pages
+// pages
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -51,16 +51,12 @@ app.get("/style.css", (req, res) => {
     res.sendFile(path.join(__dirname, "style.css"));
 });
 
-app.get("/interaction.js", (req, res) => {
-    res.sendFile(path.join(__dirname, "interaction.js"));
-});
-
 // API health check
 app.get("/api/health", (req, res) => {
     res.json({ message: "API is running" });
 });
 
-// Test database connection
+// test DB connection
 app.get("/api/test-db", (req, res) => {
     pool.query("SELECT 1 AS test", (err, result) => {
         if (err) {
@@ -74,7 +70,7 @@ app.get("/api/test-db", (req, res) => {
     });
 });
 
-// Get all dishes
+// get all dishes
 app.get("/api/dishes", (req, res) => {
     pool.query("SELECT * FROM dishes", (err, results) => {
         if (err) {
@@ -85,7 +81,7 @@ app.get("/api/dishes", (req, res) => {
     });
 });
 
-// Get all restaurants
+// get all restaurants
 app.get("/api/restaurants", (req, res) => {
     pool.query(
         "SELECT * FROM restaurants ORDER BY restaurant_name ASC",
@@ -99,10 +95,12 @@ app.get("/api/restaurants", (req, res) => {
     );
 });
 
-// Get all users
+// get all users (without passwords)
 app.get("/api/users", (req, res) => {
     pool.query(
-        "SELECT * FROM users ORDER BY username ASC",
+        `SELECT id, username, user_email, user_xp, user_level, created_at
+         FROM users
+         ORDER BY username ASC`,
         (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
@@ -113,7 +111,7 @@ app.get("/api/users", (req, res) => {
     );
 });
 
-// Get all reviews
+// get all reviews
 app.get("/api/reviews", (req, res) => {
     pool.query(
         "SELECT * FROM reviews ORDER BY id DESC",
@@ -127,7 +125,7 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
-// Get all user dish assignments
+// get all user dish assignments
 app.get("/api/user-dishes", (req, res) => {
     pool.query(
         "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
@@ -141,7 +139,84 @@ app.get("/api/user-dishes", (req, res) => {
     );
 });
 
-// Recommend a dish
+// register a new user
+console.log("About to register /api/auth/register route");
+
+app.post("/api/auth/register", async (req, res) => {
+    let { username, email, password } = req.body;
+
+    username = username?.trim();
+    email = email?.trim().toLowerCase();
+    password = password?.trim();
+
+    if (!username || !email || !password) {
+        return res.status(400).json({
+            message: "Username, email, and password are required."
+        });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            message: "Password must be at least 6 characters long."
+        });
+    }
+
+    try {
+        pool.query(
+            "SELECT id FROM users WHERE user_email = ?",
+            [email],
+            async (selectErr, results) => {
+                if (selectErr) {
+                    console.error("Register select error:", selectErr);
+                    return res.status(500).json({
+                        message: "Server error while checking existing user."
+                    });
+                }
+
+                if (results.length > 0) {
+                    return res.status(400).json({
+                        message: "An account with this email already exists."
+                    });
+                }
+
+                try {
+                    const hashedPassword = await bcrypt.hash(password, 10);
+
+                    pool.query(
+                        `INSERT INTO users (username, user_email, user_password)
+                         VALUES (?, ?, ?)`,
+                        [username, email, hashedPassword],
+                        (insertErr, insertResult) => {
+                            if (insertErr) {
+                                console.error("Register insert error:", insertErr);
+                                return res.status(500).json({
+                                    message: "Server error while creating account."
+                                });
+                            }
+
+                            return res.status(201).json({
+                                message: "Account created successfully.",
+                                userId: insertResult.insertId
+                            });
+                        }
+                    );
+                } catch (hashErr) {
+                    console.error("Password hash error:", hashErr);
+                    return res.status(500).json({
+                        message: "Server error while securing password."
+                    });
+                }
+            }
+        );
+    } catch (error) {
+        console.error("Register route error:", error);
+        return res.status(500).json({
+            message: "Unexpected server error."
+        });
+    }
+});
+
+// recommend a dish
 console.log("About to register /api/dishes/recommend route");
 
 app.post("/api/dishes/recommend", (req, res) => {
