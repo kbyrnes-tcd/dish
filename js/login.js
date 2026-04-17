@@ -82,12 +82,12 @@ loginBtn.addEventListener("click", async (e) => {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 email: emailValue,
                 password: passwordValue
             })
         });
-
         const data = await response.json();
 
         if (!response.ok) {
