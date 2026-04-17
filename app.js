@@ -258,6 +258,9 @@ app.post("/api/auth/register", async (req, res) => {
                                 });
                             }
 
+                            // Set session userId to log in the user immediately after registration
+                            req.session.userId = insertResult.insertId;
+
                             return res.status(201).json({
                                 message: "Account created successfully.",
                                 userId: insertResult.insertId
