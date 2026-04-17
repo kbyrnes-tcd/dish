@@ -24,25 +24,6 @@ function clearMainMessage() {
     input.addEventListener("input", clearMainMessage);
 });
 
-//validate username
-// function validateUsername() {
-//     const usernameValue = username.value.trim();
-//     usernameMessage.textContent = "";
-
-//     if (!usernameValue) {
-//         usernameMessage.textContent = "Username is required.";
-//         return false;
-//     }
-
-//     if (!usernamePattern.test(usernameValue)) {
-//         usernameMessage.textContent = "Please enter a valid username.";
-//         return false;
-//     }
-
-//     usernameMessage.textContent = "";
-//     return true;
-// }
-
 //updated validate username to check if it already exists
 async function validateUsername() {
     const usernameValue = username.value.trim();
@@ -158,13 +139,15 @@ email.addEventListener("blur", validateEmail);
 password.addEventListener("blur", validatePassword);
 confirmPassword.addEventListener("blur", validateConfirmPassword);
 
-//create account submit
-createBtn.addEventListener("click", async (e) => {
+//create account submit -- update with form upgrade
+const form = document.getElementById("createAccountForm");
+
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     clearMainMessage();
 
-    const isUsernameValid = validateUsername();
+    const isUsernameValid = await validateUsername();
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
     const isConfirmPasswordValid = validateConfirmPassword();
