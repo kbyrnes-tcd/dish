@@ -33,8 +33,9 @@
         <div class="avatar-container">
             <img src="assets/Ellipse 3.svg" alt="Avatar">
         </div>
-        <h1 class="user-name">Kayla B</h1>
-        <p class="user-email">kbyrnes@tcd.ie</p>
+        <!-- adds IDs for backend - do not change id names -->
+        <h1 class="user-name" id="profileUsername">Loading...</h1>
+        <p class="user-email" id="profileEmail">Loading...</p>
     </div>
 
     <!-- XP card -->
@@ -71,7 +72,8 @@
             <i class="fa-solid fa-caret-right arrow-icon"></i>
         </a>
 
-        <a href="welcome.html" class="menu-item-sign-out">
+        <!-- Sign out - handled through JS - do not change id -->
+        <a href="#" class="menu-item-sign-out" id="logoutBtn">
             <span class="sign-out">Sign Out</span>
         </a>
 
@@ -107,7 +109,10 @@
         </div>
     </div>
 
+<script src="/js/profile.js"></script>
 
 </div> <!--lock to mobile dimensions - close div -->
+
+
 </body>
 </html>
