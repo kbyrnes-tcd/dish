@@ -37,41 +37,46 @@
                 Sign into your account.
             </p>
 
-            <!-- Email -->
-            <div class="inputGroup">
-                <input
-                    type="email"
-                    class="formInput"
-                    placeholder="Enter your email"
-                    id="email"
-                    autocomplete="email"
-                >
-                <div id="emailMessage" class="fieldMessage"></div>
-            </div>
+            <!-- Form for login & enter key listener -->
+            <form id="loginForm">
 
-            <!-- Password -->
-            <div class="inputGroup">
-                <input
-                    type="password"
-                    class="formInput"
-                    placeholder="Enter your password"
-                    id="password"
-                    autocomplete="current-password"
-                >
-                <div id="passwordMessage" class="fieldMessage"></div>
-            </div>
+                <!-- Email -->
+                <div class="inputGroup">
+                    <input
+                        type="email"
+                        class="formInput"
+                        placeholder="Enter your email"
+                        id="email"
+                        autocomplete="email"
+                    >
+                    <div id="emailMessage" class="fieldMessage"></div>
+                </div>
 
-            <p class="forgotPassword">
-                <a href="#" class="forgotPasswordLink">Forgot your password?</a>
-            </p>
+                <!-- Password -->
+                <div class="inputGroup">
+                    <input
+                        type="password"
+                        class="formInput"
+                        placeholder="Enter your password"
+                        id="password"
+                        autocomplete="current-password"
+                    >
+                    <div id="passwordMessage" class="fieldMessage"></div>
+                </div>
 
-            <!-- Overall form message -->
-            <div id="loginMessage"></div>
+                <p class="forgotPassword">
+                    <a href="#" class="forgotPasswordLink">Forgot your password?</a>
+                </p>
 
-            <!-- Submit button -->
-            <button type="button" class="formButton" id="loginBtn">
-                Login
-            </button>
+                <!-- Overall form message -->
+                <div id="loginMessage"></div>
+
+                <!-- Submit button -->
+                <button type="submit" class="formButton" id="loginBtn">
+                    Login
+                </button>
+
+            </form>
             
         </section>
 

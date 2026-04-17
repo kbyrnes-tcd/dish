@@ -3,6 +3,7 @@
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
+const form = document.getElementById("loginForm");
 
 const emailMessage = document.getElementById("emailMessage");
 const passwordMessage = document.getElementById("passwordMessage");
@@ -59,7 +60,7 @@ email.addEventListener("blur", validateEmail);
 password.addEventListener("blur", validatePassword);
 
 // login submit
-loginBtn.addEventListener("click", async (e) => {
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     clearMainMessage();
