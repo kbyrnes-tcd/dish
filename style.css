@@ -513,6 +513,11 @@ p {
         /* border: 1px solid red; */
 }
 
+/* success hint for username existing */
+.fieldMessage.success {
+    color: #878787; 
+}
+
 #createAccountMessage{
     text-align: center;
     font-size: 14px;

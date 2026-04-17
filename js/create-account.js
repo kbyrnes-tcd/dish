@@ -75,6 +75,7 @@ async function validateUsername() {
         }
 
         usernameMessage.textContent = "Username available.";
+        usernameMessage.className = "fieldMessage success";
         return true;
 
     } catch (error) {
