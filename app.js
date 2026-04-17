@@ -1,14 +1,13 @@
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
+const bcrypt = require("bcrypt");
 const DBCONFIG = require("./utils/DBCONFIG");
 
 const app = express();
-
-//DEBUG
-console.log("APP FILE LOADED - RECOMMEND ROUTE VERSION");
-
 const PORT = 8000;
+
+console.log("APP FILE LOADED");
 
 const pool = mysql.createPool({
     ...DBCONFIG,
@@ -36,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Static files
 app.use("/assets", express.static(path.join(__dirname, "assets")));
+app.use("/js", express.static(path.join(__dirname, "js")));
 app.use(express.static(__dirname));
 
 // Pages
@@ -51,16 +51,12 @@ app.get("/style.css", (req, res) => {
     res.sendFile(path.join(__dirname, "style.css"));
 });
 
-app.get("/interaction.js", (req, res) => {
-    res.sendFile(path.join(__dirname, "interaction.js"));
-});
-
 // API health check
 app.get("/api/health", (req, res) => {
     res.json({ message: "API is running" });
 });
 
-// Test database connection
+// Test DB connection
 app.get("/api/test-db", (req, res) => {
     pool.query("SELECT 1 AS test", (err, result) => {
         if (err) {
@@ -99,10 +95,12 @@ app.get("/api/restaurants", (req, res) => {
     );
 });
 
-// Get all users
+// Get all users (without passwords)
 app.get("/api/users", (req, res) => {
     pool.query(
-        "SELECT * FROM users ORDER BY username ASC",
+        `SELECT id, username, user_email, user_xp, user_level, created_at
+         FROM users
+         ORDER BY username ASC`,
         (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
@@ -139,6 +137,134 @@ app.get("/api/user-dishes", (req, res) => {
             res.json(results);
         }
     );
+});
+
+// Check whether username already exists
+console.log("About to register /api/auth/check-username route");
+
+app.get("/api/auth/check-username", (req, res) => {
+    let { username } = req.query;
+
+    username = username?.trim();
+
+    if (!username) {
+        return res.status(400).json({
+            message: "Username is required."
+        });
+    }
+
+    pool.query(
+        "SELECT id FROM users WHERE username = ?",
+        [username],
+        (err, results) => {
+            if (err) {
+                console.error("Check username error:", err);
+                return res.status(500).json({
+                    message: "Server error while checking username."
+                });
+            }
+
+            return res.json({
+                exists: results.length > 0
+            });
+        }
+    );
+});
+
+// Register a new user
+console.log("About to register /api/auth/register route");
+
+app.post("/api/auth/register", async (req, res) => {
+    let { username, email, password } = req.body;
+
+    username = username?.trim();
+    email = email?.trim().toLowerCase();
+    password = password?.trim();
+
+    if (!username || !email || !password) {
+        return res.status(400).json({
+            message: "Username, email, and password are required."
+        });
+    }
+
+    const usernamePattern = /^[A-Za-z0-9_-]+$/;
+
+    if (!usernamePattern.test(username)) {
+        return res.status(400).json({
+            message: "Username can only contain letters, numbers, hyphens, and underscores."
+        });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({
+            message: "Password must be at least 6 characters long."
+        });
+    }
+
+    try {
+        // Check whether email or username already exists
+        pool.query(
+            "SELECT id, username, user_email FROM users WHERE user_email = ? OR username = ?",
+            [email, username],
+            async (selectErr, results) => {
+                if (selectErr) {
+                    console.error("Register select error:", selectErr);
+                    return res.status(500).json({
+                        message: "Server error while checking existing user."
+                    });
+                }
+
+                if (results.length > 0) {
+                    const existingUser = results[0];
+
+                    if (existingUser.user_email === email) {
+                        return res.status(400).json({
+                            message: "An account with this email already exists."
+                        });
+                    }
+
+                    if (existingUser.username === username) {
+                        return res.status(400).json({
+                            message: "Username already exists."
+                        });
+                    }
+                }
+
+                try {
+                    const hashedPassword = await bcrypt.hash(password, 10);
+
+                    pool.query(
+                        `INSERT INTO users (username, user_email, user_password)
+                         VALUES (?, ?, ?)`,
+                        [username, email, hashedPassword],
+                        (insertErr, insertResult) => {
+                            if (insertErr) {
+                                console.error("Register insert error:", insertErr);
+                                return res.status(500).json({
+                                    message: "Server error while creating account."
+                                });
+                            }
+
+                            return res.status(201).json({
+                                message: "Account created successfully.",
+                                userId: insertResult.insertId
+                            });
+                        }
+                    );
+                } catch (hashErr) {
+                    console.error("Password hash error:", hashErr);
+                    return res.status(500).json({
+                        message: "Server error while securing password."
+                    });
+                }
+            }
+        );
+    } catch (error) {
+        console.error("Register route error:", error);
+        return res.status(500).json({
+            message: "Unexpected server error."
+        });
+    }
 });
 
 // Recommend a dish
