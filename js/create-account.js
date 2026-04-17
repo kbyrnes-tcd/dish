@@ -46,15 +46,19 @@ function clearMainMessage() {
 //updated validate username to check if it already exists
 async function validateUsername() {
     const usernameValue = username.value.trim();
+    
     usernameMessage.textContent = "";
+    usernameMessage.className = "fieldMessage"; //reset
 
     if (!usernameValue) {
         usernameMessage.textContent = "Username is required.";
+        usernameMessage.classList.add("error");
         return false;
     }
 
     if (!usernamePattern.test(usernameValue)) {
         usernameMessage.textContent = "Please enter a valid username.";
+        usernameMessage.classList.add("error");
         return false;
     }
 
@@ -71,6 +75,7 @@ async function validateUsername() {
 
         if (data.exists) {
             usernameMessage.textContent = "Username already exists.";
+            usernameMessage.classList.add("error");
             return false;
         }
 
@@ -81,6 +86,7 @@ async function validateUsername() {
     } catch (error) {
         console.error("Username check error:", error);
         usernameMessage.textContent = "Error checking username.";
+        usernameMessage.classList.add("error");
         return false;
     }
 }

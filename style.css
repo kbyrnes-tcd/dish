@@ -513,7 +513,12 @@ p {
         /* border: 1px solid red; */
 }
 
-/* success hint for username existing */
+/* default error - needed for username field */
+.fieldMessage.error {
+    color: #e63946;
+}
+
+/* success hint "Username valid" */
 .fieldMessage.success {
     color: #878787; 
 }
