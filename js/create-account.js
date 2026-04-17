@@ -192,7 +192,7 @@ createBtn.addEventListener("click", async (e) => {
             throw new Error(data.message || "Failed to create account.");
         }
 
-        message.textContent = "Account created successfully.";
+        message.textContent = "Account created successfully. Redirecting...";
         //linked to css
         message.className = "success";
 
