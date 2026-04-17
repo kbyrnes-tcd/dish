@@ -19,13 +19,32 @@ function clearMainMessage() {
     message.className = "";
 }
 
-//clear message when fiels is being edited
+//clear message when field is being edited
 [username, email, password, confirmPassword].forEach(input => {
     input.addEventListener("input", clearMainMessage);
 });
 
 //validate username
-function validateUsername() {
+// function validateUsername() {
+//     const usernameValue = username.value.trim();
+//     usernameMessage.textContent = "";
+
+//     if (!usernameValue) {
+//         usernameMessage.textContent = "Username is required.";
+//         return false;
+//     }
+
+//     if (!usernamePattern.test(usernameValue)) {
+//         usernameMessage.textContent = "Please enter a valid username.";
+//         return false;
+//     }
+
+//     usernameMessage.textContent = "";
+//     return true;
+// }
+
+//updated validate username to check if it already exists
+async function validateUsername() {
     const usernameValue = username.value.trim();
     usernameMessage.textContent = "";
 
@@ -39,8 +58,30 @@ function validateUsername() {
         return false;
     }
 
-    usernameMessage.textContent = "";
-    return true;
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/auth/check-username?username=${encodeURIComponent(usernameValue)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to check username.");
+        }
+
+        if (data.exists) {
+            usernameMessage.textContent = "Username already exists.";
+            return false;
+        }
+
+        usernameMessage.textContent = "Username available.";
+        return true;
+
+    } catch (error) {
+        console.error("Username check error:", error);
+        usernameMessage.textContent = "Error checking username.";
+        return false;
+    }
 }
 
 //validate email

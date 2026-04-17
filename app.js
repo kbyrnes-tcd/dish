@@ -16,7 +16,7 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// allow requests from Live Server frontend
+// Allow requests from Live Server frontend
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -29,16 +29,16 @@ app.use((req, res, next) => {
     next();
 });
 
-// middleware
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// static files
+// Static files
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use(express.static(__dirname));
 
-// pages
+// Pages
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -56,7 +56,7 @@ app.get("/api/health", (req, res) => {
     res.json({ message: "API is running" });
 });
 
-// test DB connection
+// Test DB connection
 app.get("/api/test-db", (req, res) => {
     pool.query("SELECT 1 AS test", (err, result) => {
         if (err) {
@@ -70,7 +70,7 @@ app.get("/api/test-db", (req, res) => {
     });
 });
 
-// get all dishes
+// Get all dishes
 app.get("/api/dishes", (req, res) => {
     pool.query("SELECT * FROM dishes", (err, results) => {
         if (err) {
@@ -81,7 +81,7 @@ app.get("/api/dishes", (req, res) => {
     });
 });
 
-// get all restaurants
+// Get all restaurants
 app.get("/api/restaurants", (req, res) => {
     pool.query(
         "SELECT * FROM restaurants ORDER BY restaurant_name ASC",
@@ -95,7 +95,7 @@ app.get("/api/restaurants", (req, res) => {
     );
 });
 
-// get all users (without passwords)
+// Get all users (without passwords)
 app.get("/api/users", (req, res) => {
     pool.query(
         `SELECT id, username, user_email, user_xp, user_level, created_at
@@ -111,7 +111,7 @@ app.get("/api/users", (req, res) => {
     );
 });
 
-// get all reviews
+// Get all reviews
 app.get("/api/reviews", (req, res) => {
     pool.query(
         "SELECT * FROM reviews ORDER BY id DESC",
@@ -125,7 +125,7 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
-// get all user dish assignments
+// Get all user dish assignments
 app.get("/api/user-dishes", (req, res) => {
     pool.query(
         "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
@@ -139,7 +139,39 @@ app.get("/api/user-dishes", (req, res) => {
     );
 });
 
-// register a new user
+// Check whether username already exists
+console.log("About to register /api/auth/check-username route");
+
+app.get("/api/auth/check-username", (req, res) => {
+    let { username } = req.query;
+
+    username = username?.trim();
+
+    if (!username) {
+        return res.status(400).json({
+            message: "Username is required."
+        });
+    }
+
+    pool.query(
+        "SELECT id FROM users WHERE username = ?",
+        [username],
+        (err, results) => {
+            if (err) {
+                console.error("Check username error:", err);
+                return res.status(500).json({
+                    message: "Server error while checking username."
+                });
+            }
+
+            return res.json({
+                exists: results.length > 0
+            });
+        }
+    );
+});
+
+// Register a new user
 console.log("About to register /api/auth/register route");
 
 app.post("/api/auth/register", async (req, res) => {
@@ -155,6 +187,14 @@ app.post("/api/auth/register", async (req, res) => {
         });
     }
 
+    const usernamePattern = /^[A-Za-z0-9_-]+$/;
+
+    if (!usernamePattern.test(username)) {
+        return res.status(400).json({
+            message: "Username can only contain letters, numbers, hyphens, and underscores."
+        });
+    }
+
     if (password.length < 6) {
         return res.status(400).json({
             message: "Password must be at least 6 characters long."
@@ -162,9 +202,10 @@ app.post("/api/auth/register", async (req, res) => {
     }
 
     try {
+        // Check whether email or username already exists
         pool.query(
-            "SELECT id FROM users WHERE user_email = ?",
-            [email],
+            "SELECT id, username, user_email FROM users WHERE user_email = ? OR username = ?",
+            [email, username],
             async (selectErr, results) => {
                 if (selectErr) {
                     console.error("Register select error:", selectErr);
@@ -174,9 +215,19 @@ app.post("/api/auth/register", async (req, res) => {
                 }
 
                 if (results.length > 0) {
-                    return res.status(400).json({
-                        message: "An account with this email already exists."
-                    });
+                    const existingUser = results[0];
+
+                    if (existingUser.user_email === email) {
+                        return res.status(400).json({
+                            message: "An account with this email already exists."
+                        });
+                    }
+
+                    if (existingUser.username === username) {
+                        return res.status(400).json({
+                            message: "Username already exists."
+                        });
+                    }
                 }
 
                 try {
@@ -216,7 +267,7 @@ app.post("/api/auth/register", async (req, res) => {
     }
 });
 
-// recommend a dish
+// Recommend a dish
 console.log("About to register /api/dishes/recommend route");
 
 app.post("/api/dishes/recommend", (req, res) => {
