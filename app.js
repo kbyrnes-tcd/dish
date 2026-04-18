@@ -139,19 +139,19 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
-// Get all user dish assignments
-app.get("/api/user-dishes", (req, res) => {
-    pool.query(
-        "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
-        (err, results) => {
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
+// Get all user dish assignments -- DEBUG in case my user dish doesnt work below 
+// app.get("/api/user-dishes", (req, res) => {
+//     pool.query(
+//         "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
+//         (err, results) => {
+//             if (err) {
+//                 return res.status(500).json({ error: err.message });
+//             }
 
-            res.json(results);
-        }
-    );
-});
+//             res.json(results);
+//         }
+//     );
+// });
 
 // Check whether username already exists
 console.log("About to register /api/auth/check-username route");
@@ -360,14 +360,21 @@ app.post("/api/auth/login", async (req, res) => {
 console.log("About to register /api/dishes/recommend route");
 
 app.post("/api/dishes/recommend", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "You must be logged in to get a dish recommendation."
+        });
+    }
+
     console.log("recommend route hit");
     console.log("body received:", req.body);
 
+    const userId = req.session.userId;
     const { cuisine, location, price_range, course_type } = req.body;
 
     let query = `
         SELECT 
-            d.id AS dish_id,
+            rd.id AS dish_id,
             d.dish_name,
             r.restaurant_name,
             r.restaurant_location,
@@ -378,10 +385,14 @@ app.post("/api/dishes/recommend", (req, res) => {
         FROM restaurants_dishes rd
         JOIN dishes d ON rd.dishes_id = d.id
         JOIN restaurants r ON rd.restaurant_id = r.id
-        WHERE 1=1
+        WHERE rd.id NOT IN (
+            SELECT ud.dish_id
+            FROM user_dishes ud
+            WHERE ud.user_id = ?
+        )
     `;
 
-    const values = [];
+    const values = [userId];
 
     if (cuisine) {
         query += " AND r.restaurant_cuisine = ?";
@@ -389,8 +400,8 @@ app.post("/api/dishes/recommend", (req, res) => {
     }
 
     if (location) {
-        query += " AND r.restaurant_location LIKE ?";
-        values.push(`%${location}%`);
+        query += " AND r.restaurant_location = ?";
+        values.push(location);
     }
 
     if (price_range) {
@@ -415,11 +426,251 @@ app.post("/api/dishes/recommend", (req, res) => {
         }
 
         if (results.length === 0) {
-            return res.status(404).json({ message: "No dishes found" });
+            return res.status(404).json({
+                message: "No dishes found that match your filters and haven't already been assigned."
+            });
         }
 
         res.json(results[0]);
     });
+});
+
+// save a recommended dish to the logged-in user
+console.log("About to register /api/user-dishes route");
+
+app.post("/api/user-dishes", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "You must be logged in to save dishes."
+        });
+    }
+
+    const userId = req.session.userId;
+    const { dish_id } = req.body;
+
+    if (!dish_id) {
+        return res.status(400).json({
+            message: "Dish ID is required."
+        });
+    }
+
+    pool.query(
+        `INSERT INTO user_dishes (user_id, dish_id, dish_status)
+         VALUES (?, ?, 'assigned')`,
+        [userId, dish_id],
+        (err, result) => {
+            if (err) {
+                console.error("Save user dish error:", err);
+                return res.status(500).json({
+                    message: "Failed to save dish to user profile."
+                });
+            }
+
+            return res.status(201).json({
+                message: "Dish saved successfully.",
+                userDishId: result.insertId
+            });
+        }
+    );
+});
+
+// Get current assigned dish for logged-in user
+console.log("About to register /api/user-dishes/current route");
+
+app.get("/api/user-dishes/current", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    const userId = req.session.userId;
+
+    pool.query(
+        `
+        SELECT 
+            ud.id AS user_dish_id,
+            ud.dish_status,
+            ud.assigned_at,
+            ud.completed_at,
+            rd.id AS dish_id,
+            d.dish_name,
+            r.restaurant_name,
+            r.restaurant_location,
+            r.restaurant_address,
+            r.restaurant_price,
+            r.restaurant_cuisine,
+            rd.course_type
+        FROM user_dishes ud
+        JOIN restaurants_dishes rd ON ud.dish_id = rd.id
+        JOIN dishes d ON rd.dishes_id = d.id
+        JOIN restaurants r ON rd.restaurant_id = r.id
+        WHERE ud.user_id = ?
+          AND ud.dish_status = 'assigned'
+        ORDER BY ud.assigned_at DESC
+        LIMIT 1
+        `,
+        [userId],
+        (err, results) => {
+            if (err) {
+                console.error("Current dish query error:", err);
+                return res.status(500).json({
+                    message: "Failed to fetch current dish."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "No current dish found."
+                });
+            }
+
+            res.json(results[0]);
+        }
+    );
+});
+
+// Get completed dish history for logged-in user
+console.log("About to register /api/user-dishes/history route");
+
+app.get("/api/user-dishes/history", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    const userId = req.session.userId;
+
+    pool.query(
+        `
+        SELECT 
+            ud.id AS user_dish_id,
+            ud.dish_status,
+            ud.assigned_at,
+            ud.completed_at,
+            rd.id AS dish_id,
+            d.dish_name,
+            r.restaurant_name,
+            r.restaurant_location,
+            r.restaurant_address,
+            r.restaurant_price,
+            r.restaurant_cuisine,
+            rd.course_type
+        FROM user_dishes ud
+        JOIN restaurants_dishes rd ON ud.dish_id = rd.id
+        JOIN dishes d ON rd.dishes_id = d.id
+        JOIN restaurants r ON rd.restaurant_id = r.id
+        WHERE ud.user_id = ?
+          AND ud.dish_status = 'completed'
+        ORDER BY ud.completed_at DESC, ud.assigned_at DESC
+        `,
+        [userId],
+        (err, results) => {
+            if (err) {
+                console.error("History query error:", err);
+                return res.status(500).json({
+                    message: "Failed to fetch dish history."
+                });
+            }
+
+            res.json(results);
+        }
+    );
+});
+
+//mark current dish as completed
+console.log("About to register /api/user-dishes/:id/complete route");
+
+app.patch("/api/user-dishes/:id/complete", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    const userId = req.session.userId;
+    const userDishId = req.params.id;
+
+    pool.query(
+        `
+        SELECT 
+            ud.id,
+            ud.user_id,
+            ud.dish_status,
+            r.restaurant_price
+        FROM user_dishes ud
+        JOIN restaurants_dishes rd ON ud.dish_id = rd.id
+        JOIN restaurants r ON rd.restaurant_id = r.id
+        WHERE ud.id = ?
+          AND ud.user_id = ?
+          AND ud.dish_status = 'assigned'
+        LIMIT 1
+        `,
+        [userDishId, userId],
+        (selectErr, results) => {
+            if (selectErr) {
+                console.error("Complete dish select error:", selectErr);
+                return res.status(500).json({
+                    message: "Failed to find assigned dish."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "Assigned dish not found."
+                });
+            }
+
+            const row = results[0];
+
+            let xpToAdd = 0;
+            if (row.restaurant_price === "€") xpToAdd = 50;
+            if (row.restaurant_price === "€€") xpToAdd = 100;
+            if (row.restaurant_price === "€€€") xpToAdd = 150;
+
+            pool.query(
+                `
+                UPDATE user_dishes
+                SET dish_status = 'completed',
+                    completed_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                  AND user_id = ?
+                `,
+                [userDishId, userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error("Complete dish update error:", updateErr);
+                        return res.status(500).json({
+                            message: "Failed to complete dish."
+                        });
+                    }
+
+                    pool.query(
+                        `
+                        UPDATE users
+                        SET user_xp = user_xp + ?
+                        WHERE id = ?
+                        `,
+                        [xpToAdd, userId],
+                        (xpErr) => {
+                            if (xpErr) {
+                                console.error("XP update error:", xpErr);
+                                return res.status(500).json({
+                                    message: "Dish completed, but failed to update XP."
+                                });
+                            }
+
+                            return res.status(200).json({
+                                message: "Dish marked as completed.",
+                                xpAdded: xpToAdd
+                            });
+                        }
+                    );
+                }
+            );
+        }
+    );
 });
 
 //current user route
