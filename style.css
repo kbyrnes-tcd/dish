@@ -702,8 +702,20 @@ p {
 /* ----------------- my dishes page ------------------ */
 /* --------------------------------------------------- */
 
+.returnLinkContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -5px;
+}
 
-/* -------------- current featured dish ------------------- */
+.returnLink {
+    text-decoration: none;
+    color: #878787;
+    font-size: 14px;
+}
+
+
+/* ---------- current featured dish ----------------- */
 
 .featuredDishCard {
     width: 100%;
@@ -805,7 +817,7 @@ p {
 
 /* --------------------------------------------------- */
 
-.dishCard {
+/* .dishCard {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.08);
@@ -814,7 +826,7 @@ p {
 }
 
 .currentDishCard {
-    margin-bottom: 25px; /* extra space below current dish card */
+    margin-bottom: 25px;
 }
 
 .dishCardTop p {
@@ -847,7 +859,7 @@ p {
 
 .dishRestaurant {
     font-weight: 600;
-}
+} */
 
 
 /* ----------------- profile page ------------------ */
