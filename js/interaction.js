@@ -90,18 +90,20 @@ const getDishBtn = document.getElementById("getDishBtn");
 
 getDishBtn.addEventListener("click", async () => {
     function getSelectedValues(dropdownId) {
-    const checkboxes = document.querySelectorAll(
-        `#${dropdownId} input[type="checkbox"]:not(.selectAll)`
-    );
+        const checkboxes = document.querySelectorAll(
+            `#${dropdownId} input[type="checkbox"]:not(.selectAll)`
+        );
 
-    const selected = [...checkboxes].filter(cb => cb.checked).map(cb => cb.value);
+        const selected = [...checkboxes]
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
 
-    if (selected.length === checkboxes.length) {
-        return [];
+        if (selected.length === checkboxes.length) {
+            return [];
+        }
+
+        return selected;
     }
-
-    return selected;
-}
 
     const cuisines = getSelectedValues("cuisineDropdown");
     const locations = getSelectedValues("locationDropdown");
@@ -132,6 +134,7 @@ getDishBtn.addEventListener("click", async () => {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify(requestBody)
         });
 
@@ -153,14 +156,30 @@ getDishBtn.addEventListener("click", async () => {
             throw new Error(data?.message || data?.error || "No dishes found");
         }
 
-        //displayDish(data);
+        console.log("Recommended dish:", data);
 
-        //save dish to localStorage
-        localStorage.setItem("currentDish", JSON.stringify(data));
+        const saveResponse = await fetch("http://127.0.0.1:8000/api/user-dishes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                dish_id: data.dish_id
+            })
+        });
 
-        //redirect to My Dishes page
+        const saveData = await saveResponse.json();
+        console.log("Save dish response:", saveData);
+
+        if (!saveResponse.ok) {
+            throw new Error(saveData?.message || "Failed to save dish.");
+        }
+
+        // localStorage.setItem("currentDish", JSON.stringify(data));
+
+        //redirect
         window.location.href = "my-dishes.html";
-
 
     } catch (err) {
         console.error("Fetch error:", err);
