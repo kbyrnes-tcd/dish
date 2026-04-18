@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const currentContainer = document.getElementById("currentDishContainer");
     const pastContainer = document.getElementById("pastDishesContainer");
+    const returnLink = document.getElementById("returnLinkContainer");
 
     function getXpValue(price) {
         if (price === "€") return 50;
@@ -96,6 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadMyDishes() {
         try {
+            returnLink.hidden = true;
+
             const currentResponse = await fetch("http://127.0.0.1:8000/api/user-dishes/current", {
                 credentials: "include"
             });
@@ -107,12 +110,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (currentResponse.status === 404) {
                 currentContainer.innerHTML = `<p>No current dish yet.</p>`;
+                returnLink.hidden = true;
             } else if (!currentResponse.ok) {
                 const errorData = await currentResponse.json();
                 throw new Error(errorData.message || "Failed to load current dish.");
             } else {
                 const currentDish = await currentResponse.json();
                 renderCurrentDish(currentDish);
+                returnLink.hidden = false;
             }
 
             const historyResponse = await fetch("http://127.0.0.1:8000/api/user-dishes/history", {
