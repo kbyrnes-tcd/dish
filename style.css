@@ -108,7 +108,7 @@ p {
 
 .feedPost {
     background: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
 }
 
@@ -629,7 +629,7 @@ p {
     top: 55px;
     width: 100%;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 10px 0;
     z-index: 1005;
@@ -702,9 +702,111 @@ p {
 /* ----------------- my dishes page ------------------ */
 /* --------------------------------------------------- */
 
+
+/* -------------- current featured dish ------------------- */
+
+.featuredDishCard {
+    width: 100%;
+    max-width: 350px;
+    /* min-height: 390px; */
+    margin: 20px auto 30px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.08);
+    overflow: hidden;
+}
+
+.featuredDishImage {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background: #e9e9e9;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.xpTag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    min-width: 90px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #454545;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 1, 15, 0.08);
+}
+
+.featuredDishContent {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.featuredDishMeta {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #808080;
+    line-height: 1.4;
+}
+
+.featuredDishName {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #454545;
+    line-height: 1.25;
+}
+
+.featuredDishRestaurantBlock {
+    margin-top: 20px;
+}
+
+.featuredDishMeta,
+.featuredDishName,
+.featuredDishRestaurantBlock {
+    width: 100%;
+}
+
+.featuredDishRestaurant,
+.featuredDishAddress {
+    margin: 0;
+    font-size: 14px;
+    color: #808080;
+    line-height: 1.5;
+}
+
+.featuredDishRestaurant {
+    font-weight: 500;
+}
+
+.triedItBtn {
+    width: 300px;
+    height: 50px;
+    margin-top: 20px;
+    background-color: #FF6128;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* --------------------------------------------------- */
+
 .dishCard {
     background: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.08);
     padding: 18px 20px;
     margin-bottom: 15px;

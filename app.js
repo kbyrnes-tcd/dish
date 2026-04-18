@@ -371,6 +371,7 @@ app.post("/api/dishes/recommend", (req, res) => {
             d.dish_name,
             r.restaurant_name,
             r.restaurant_location,
+            r.restaurant_address,
             r.restaurant_price,
             r.restaurant_cuisine,
             rd.course_type
