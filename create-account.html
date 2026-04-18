@@ -40,62 +40,68 @@
                 Start your profile to begin discovering dishes, sharing reviews, and earning rewards.
             </p>
 
-            <!-- Username -->
-            <div class="inputGroup">
-                <input
-                    type="text"
-                    class="formInput"
-                    placeholder="Choose a username"
-                    id="username"
-                    autocomplete="username"
-                    maxlength="20"
-                >
-                <div id="usernameMessage" class="fieldMessage"></div>
-            </div>
+            <!-- Form for account creation & enter key listener -->
+            <form id="createAccountForm">
 
-            <!-- Email -->
-            <div class="inputGroup">
-                <input
-                    type="email"
-                    class="formInput"
-                    placeholder="Enter your email"
-                    id="email"
-                    autocomplete="email"
-                >
-                <div id="emailMessage" class="fieldMessage"></div>
-            </div>
+                <!-- Username -->
+                <div class="inputGroup">
+                    <input
+                        type="text"
+                        class="formInput"
+                        placeholder="Choose a username"
+                        id="username"
+                        autocomplete="username"
+                        maxlength="20"
+                    >
+                    <div id="usernameMessage" class="fieldMessage"></div>
+                </div>
 
-            <!-- Password -->
-            <div class="inputGroup">
-                <input
-                    type="password"
-                    class="formInput"
-                    placeholder="Create a password"
-                    id="password"
-                    autocomplete="new-password"
-                >
-                <div id="passwordMessage" class="fieldMessage"></div>
-            </div>
+                <!-- Email -->
+                <div class="inputGroup">
+                    <input
+                        type="email"
+                        class="formInput"
+                        placeholder="Enter your email"
+                        id="email"
+                        autocomplete="email"
+                    >
+                    <div id="emailMessage" class="fieldMessage"></div>
+                </div>
 
-            <!-- Confirm Password -->
-            <div class="inputGroup">
-                <input
-                    type="password"
-                    class="formInput"
-                    placeholder="Confirm password"
-                    id="confirmPassword"
-                    autocomplete="new-password"
-                >
-                <div id="confirmPasswordMessage" class="fieldMessage"></div>
-            </div>
+                <!-- Password -->
+                <div class="inputGroup">
+                    <input
+                        type="password"
+                        class="formInput"
+                        placeholder="Create a password"
+                        id="password"
+                        autocomplete="new-password"
+                    >
+                    <div id="passwordMessage" class="fieldMessage"></div>
+                </div>
 
-            <!-- Overall form message -->
-            <div id="createAccountMessage"></div>
+                <!-- Confirm Password -->
+                <div class="inputGroup">
+                    <input
+                        type="password"
+                        class="formInput"
+                        placeholder="Confirm password"
+                        id="confirmPassword"
+                        autocomplete="new-password"
+                    >
+                    <div id="confirmPasswordMessage" class="fieldMessage"></div>
+                </div>
 
-            <!-- Submit button -->
-            <button type="button" class="formButton" id="createAccountBtn">
-                Create Account
-            </button>
+                <!-- Overall form message -->
+                <div id="createAccountMessage"></div>
+
+                <!-- Submit button -->
+                <button type="submit" class="formButton" id="createAccountBtn">
+                    Create Account
+                </button>
+
+            </form>
+
         </section>
 
         <div class="questionLogin">

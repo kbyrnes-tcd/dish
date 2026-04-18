@@ -24,37 +24,22 @@ function clearMainMessage() {
     input.addEventListener("input", clearMainMessage);
 });
 
-//validate username
-// function validateUsername() {
-//     const usernameValue = username.value.trim();
-//     usernameMessage.textContent = "";
-
-//     if (!usernameValue) {
-//         usernameMessage.textContent = "Username is required.";
-//         return false;
-//     }
-
-//     if (!usernamePattern.test(usernameValue)) {
-//         usernameMessage.textContent = "Please enter a valid username.";
-//         return false;
-//     }
-
-//     usernameMessage.textContent = "";
-//     return true;
-// }
-
 //updated validate username to check if it already exists
 async function validateUsername() {
     const usernameValue = username.value.trim();
+    
     usernameMessage.textContent = "";
+    usernameMessage.className = "fieldMessage"; //reset
 
     if (!usernameValue) {
         usernameMessage.textContent = "Username is required.";
+        usernameMessage.classList.add("error");
         return false;
     }
 
     if (!usernamePattern.test(usernameValue)) {
         usernameMessage.textContent = "Please enter a valid username.";
+        usernameMessage.classList.add("error");
         return false;
     }
 
@@ -71,6 +56,7 @@ async function validateUsername() {
 
         if (data.exists) {
             usernameMessage.textContent = "Username already exists.";
+            usernameMessage.classList.add("error");
             return false;
         }
 
@@ -81,6 +67,7 @@ async function validateUsername() {
     } catch (error) {
         console.error("Username check error:", error);
         usernameMessage.textContent = "Error checking username.";
+        usernameMessage.classList.add("error");
         return false;
     }
 }
@@ -152,13 +139,15 @@ email.addEventListener("blur", validateEmail);
 password.addEventListener("blur", validatePassword);
 confirmPassword.addEventListener("blur", validateConfirmPassword);
 
-//create account submit
-createBtn.addEventListener("click", async (e) => {
+//create account submit -- update with form upgrade
+const form = document.getElementById("createAccountForm");
+
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     clearMainMessage();
 
-    const isUsernameValid = validateUsername();
+    const isUsernameValid = await validateUsername();
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
     const isConfirmPasswordValid = validateConfirmPassword();
@@ -179,6 +168,7 @@ createBtn.addEventListener("click", async (e) => {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 username: usernameValue,
                 email: emailValue,
@@ -192,7 +182,7 @@ createBtn.addEventListener("click", async (e) => {
             throw new Error(data.message || "Failed to create account.");
         }
 
-        message.textContent = "Account created successfully.";
+        message.textContent = "Account created successfully. Redirecting...";
         //linked to css
         message.className = "success";
 

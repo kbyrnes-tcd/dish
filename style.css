@@ -504,7 +504,7 @@ p {
 }
 
 .fieldMessage {
-    text-align: left;
+    text-align: right;
     font-size: 11px;
     color: #e63946;
     margin-top: -25px;
@@ -513,7 +513,12 @@ p {
         /* border: 1px solid red; */
 }
 
-/* success hint for username existing */
+/* default error - needed for username field */
+.fieldMessage.error {
+    color: #e63946;
+}
+
+/* success hint "Username valid" */
 .fieldMessage.success {
     color: #878787; 
 }
@@ -539,8 +544,8 @@ p {
 
 .forgotPassword {
     text-align: left;
-    padding-left: 15px;
-    margin-top: -25px;
+    /* padding-left: 15px; */
+    margin-top: -30px;
     margin-bottom: 30px;
 }
 
@@ -553,6 +558,20 @@ p {
 
 .forgotPasswordLink:hover {
     opacity: 0.7;
+}
+
+#loginMessage {
+    text-align: center;
+    font-size: 14px;
+    height: 18px;
+}
+
+#loginMessage.error {
+    color: #e63946;
+}
+
+#loginMessage.success {
+    color: #2a9d71;
 }
 
 /* ----------------- new dish page ------------------ */

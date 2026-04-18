@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Credentials", "true");
 
     if (req.method === "OPTIONS") {
         return res.sendStatus(200);
@@ -28,6 +30,18 @@ app.use((req, res, next) => {
 
     next();
 });
+
+//add session middleware
+app.use(session({
+    secret: "dish-secret-key-change-this-later",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, //true only with HTTPS
+        httpOnly: true,
+        sameSite: "lax"
+    }
+}));
 
 // Middleware
 app.use(express.json());
@@ -202,7 +216,6 @@ app.post("/api/auth/register", async (req, res) => {
     }
 
     try {
-        // Check whether email or username already exists
         pool.query(
             "SELECT id, username, user_email FROM users WHERE user_email = ? OR username = ?",
             [email, username],
@@ -245,6 +258,9 @@ app.post("/api/auth/register", async (req, res) => {
                                 });
                             }
 
+                            // Set session userId to log in the user immediately after registration
+                            req.session.userId = insertResult.insertId;
+
                             return res.status(201).json({
                                 message: "Account created successfully.",
                                 userId: insertResult.insertId
@@ -261,6 +277,79 @@ app.post("/api/auth/register", async (req, res) => {
         );
     } catch (error) {
         console.error("Register route error:", error);
+        return res.status(500).json({
+            message: "Unexpected server error."
+        });
+    }
+});
+
+// Login a user
+console.log("About to register /api/auth/login route");
+
+app.post("/api/auth/login", async (req, res) => {
+    let { email, password } = req.body;
+
+    email = email?.trim().toLowerCase();
+    password = password?.trim();
+
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Email and password are required."
+        });
+    }
+
+    try {
+        pool.query(
+            "SELECT id, username, user_email, user_password, user_xp, user_level, created_at FROM users WHERE user_email = ?",
+            [email],
+            async (selectErr, results) => {
+                if (selectErr) {
+                    console.error("Login select error:", selectErr);
+                    return res.status(500).json({
+                        message: "Server error while checking login."
+                    });
+                }
+
+                if (results.length === 0) {
+                    return res.status(400).json({
+                        message: "Invalid email or password."
+                    });
+                }
+
+                const user = results[0];
+
+                try {
+                    const isPasswordMatch = await bcrypt.compare(password, user.user_password);
+
+                    if (!isPasswordMatch) {
+                        return res.status(400).json({
+                            message: "Invalid email or password."
+                        });
+                    }
+
+                    req.session.userId = user.id;
+
+                    return res.status(200).json({
+                        message: "Login successful.",
+                        user: {
+                            id: user.id,
+                            username: user.username,
+                            email: user.user_email,
+                            xp: user.user_xp,
+                            level: user.user_level,
+                            created_at: user.created_at
+                        }
+                    });
+                } catch (compareErr) {
+                    console.error("Password compare error:", compareErr);
+                    return res.status(500).json({
+                        message: "Server error while verifying password."
+                    });
+                }
+            }
+        );
+    } catch (error) {
+        console.error("Login route error:", error);
         return res.status(500).json({
             message: "Unexpected server error."
         });
@@ -329,6 +418,71 @@ app.post("/api/dishes/recommend", (req, res) => {
         }
 
         res.json(results[0]);
+    });
+});
+
+//current user route
+console.log("About to register /api/auth/me route");
+
+app.get("/api/auth/me", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    pool.query(
+        `SELECT id, username, user_email, user_xp, user_level, created_at
+         FROM users
+         WHERE id = ?`,
+        [req.session.userId],
+        (err, results) => {
+            if (err) {
+                console.error("Auth me error:", err);
+                return res.status(500).json({
+                    message: "Server error while fetching current user."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "User not found."
+                });
+            }
+
+            const user = results[0];
+
+            return res.status(200).json({
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.user_email,
+                    xp: user.user_xp,
+                    level: user.user_level,
+                    created_at: user.created_at
+                }
+            });
+        }
+    );
+});
+
+//log out route
+console.log("About to register /api/auth/logout route");
+
+app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Logout error:", err);
+            return res.status(500).json({
+                message: "Failed to log out."
+            });
+        }
+
+        res.clearCookie("connect.sid");
+
+        return res.status(200).json({
+            message: "Logged out successfully."
+        });
     });
 });
 
