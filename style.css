@@ -52,6 +52,27 @@ p {
     /* border: 1px solid blue; */
 }
 
+.headerAvatar {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.headerAvatarLetter {
+    font-size: 16px;
+    font-weight: 400;
+    color: #777;
+    text-transform: uppercase;
+}
+
 /* ------------------ search bar ------------------- */
 
 .customSearch {
