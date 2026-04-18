@@ -267,6 +267,71 @@ app.post("/api/auth/register", async (req, res) => {
     }
 });
 
+// Login user
+console.log("About to register /api/auth/login route");
+
+app.post("/api/auth/login", (req, res) => {
+    let { email, password } = req.body;
+
+    email = email?.trim().toLowerCase();
+
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Email and password are required."
+        });
+    }
+
+    pool.query(
+        `SELECT id, username, user_email, user_password, user_xp, user_level, created_at
+         FROM users
+         WHERE user_email = ?`,
+        [email],
+        async (selectErr, results) => {
+            if (selectErr) {
+                console.error("Login select error:", selectErr);
+                return res.status(500).json({
+                    message: "Server error while logging in."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(401).json({
+                    message: "Invalid email or password."
+                });
+            }
+
+            const user = results[0];
+
+            try {
+                const passwordMatches = await bcrypt.compare(password, user.user_password);
+
+                if (!passwordMatches) {
+                    return res.status(401).json({
+                        message: "Invalid email or password."
+                    });
+                }
+
+                return res.json({
+                    message: "Login successful.",
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        email: user.user_email,
+                        xp: user.user_xp,
+                        level: user.user_level,
+                        createdAt: user.created_at
+                    }
+                });
+            } catch (compareErr) {
+                console.error("Password compare error:", compareErr);
+                return res.status(500).json({
+                    message: "Server error while checking password."
+                });
+            }
+        }
+    );
+});
+
 // Recommend a dish
 console.log("About to register /api/dishes/recommend route");
 
