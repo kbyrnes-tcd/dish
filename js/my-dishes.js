@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.innerHTML = `
     <div class="featuredDishCard">
         <div class="featuredDishImage" style="background-image: url('${imageUrl}')">
-            <div class="xpTag">${xpValue} XP</div>
+            <div class="xpTag">+ ${xpValue} XP</div>
         </div>
 
         <div class="featuredDishContent">
