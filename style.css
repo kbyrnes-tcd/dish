@@ -633,10 +633,29 @@ p {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 10px 0;
     z-index: 1005;
+
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
     opacity: 0;
     transform: translateY(-5px);
     pointer-events: none;
     transition: all 0.2s ease;
+}
+
+/* dropdown scroll bar smoothing */
+.dropdownMenu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdownMenu::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.dropdownMenu::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .dropdown.open .dropdownMenu {
