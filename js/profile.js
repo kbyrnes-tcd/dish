@@ -1,7 +1,7 @@
 // profile logic
-
 const usernameEl = document.getElementById("profileUsername");
 const emailEl = document.getElementById("profileEmail");
+const avatarLetterEl = document.getElementById("avatarLetter");
 const logoutBtn = document.getElementById("logoutBtn");
 
 // load current user
@@ -21,6 +21,7 @@ async function loadProfile() {
 
         usernameEl.textContent = user.username;
         emailEl.textContent = user.email;
+        avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
 
     } catch (error) {
         console.error("Profile load error:", error);

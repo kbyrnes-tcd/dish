@@ -90,14 +90,18 @@ const getDishBtn = document.getElementById("getDishBtn");
 
 getDishBtn.addEventListener("click", async () => {
     function getSelectedValues(dropdownId) {
-        const checkboxes = document.querySelectorAll(
-            `#${dropdownId} input[type="checkbox"]:not(.selectAll)`
-        );
+    const checkboxes = document.querySelectorAll(
+        `#${dropdownId} input[type="checkbox"]:not(.selectAll)`
+    );
 
-        return [...checkboxes]
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
+    const selected = [...checkboxes].filter(cb => cb.checked).map(cb => cb.value);
+
+    if (selected.length === checkboxes.length) {
+        return [];
     }
+
+    return selected;
+}
 
     const cuisines = getSelectedValues("cuisineDropdown");
     const locations = getSelectedValues("locationDropdown");
