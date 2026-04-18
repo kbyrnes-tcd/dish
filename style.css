@@ -766,6 +766,11 @@ p {
     line-height: 1.25;
 }
 
+.featuredDishRestaurant {
+    font-weight: 600;
+    
+}
+
 .featuredDishRestaurantBlock {
     margin-top: 20px;
 }
@@ -782,10 +787,6 @@ p {
     font-size: 14px;
     color: #808080;
     line-height: 1.5;
-}
-
-.featuredDishRestaurant {
-    font-weight: 500;
 }
 
 .triedItBtn {
