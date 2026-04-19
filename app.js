@@ -1315,6 +1315,8 @@ app.post("/api/reviews", upload.array("photos", 4), (req, res) => {
 
 /* ----------------- start server ------------------ */
 
-app.listen(PORT, () => {
-    console.log(`App running on http://127.0.0.1:${PORT}`);
+const HOST = "0.0.0.0";
+
+app.listen(PORT, HOST, () => {
+    console.log(`App running on http://${HOST}:${PORT}`);
 });
