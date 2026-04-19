@@ -98,6 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const xpValue = getXpValue(dish.restaurant_price);
             const imageUrl = getCuisineImage(dish.restaurant_cuisine);
 
+            const hasReviewContent =
+                Number(dish.review_rating) > 0 ||
+                (dish.dish_review && dish.dish_review.trim() !== "") ||
+                (dish.photos && dish.photos.length > 0);
+
             return `
                 <div class="featuredDishCard pastFeaturedDishCard">
                     <div class="featuredDishImage" style="background-image: url('${imageUrl}')">
@@ -118,17 +123,26 @@ document.addEventListener("DOMContentLoaded", () => {
                             </p>
                         </div>
 
-                        <div class="pastDishReviewBlock">
-                            <div class="pastDishStars">
-                                ${renderStars(dish.review_rating)}
+                        ${hasReviewContent ? `
+                            <div class="pastDishReviewBlock">
+                                <div class="pastDishStars">
+                                    ${renderStars(dish.review_rating)}
+                                </div>
+
+                                ${dish.dish_review ? `
+                                    <p class="pastDishNote">${dish.dish_review}</p>
+                                ` : ""}
+
+                                ${renderPhotos(dish.photos)}
+
+                                <button 
+                                    class="deleteReviewBtn" 
+                                    data-user-dish-id="${dish.user_dish_id}"
+                                >
+                                    Remove dish
+                                </button>
                             </div>
-
-                            ${dish.dish_review ? `
-                                <p class="pastDishNote">${dish.dish_review}</p>
-                            ` : ""}
-
-                            ${renderPhotos(dish.photos)}
-                        </div>
+                        ` : ""}
                     </div>
                 </div>
             `;
@@ -179,11 +193,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    document.addEventListener("click", (e) => {
-        if (!e.target.classList.contains("triedItBtn")) return;
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("triedItBtn")) {
+            const userDishId = e.target.dataset.userDishId;
+            window.location.href = `review.html?userDishId=${userDishId}`;
+            return;
+        }
 
-        const userDishId = e.target.dataset.userDishId;
-        window.location.href = `review.html?userDishId=${userDishId}`;
+        if (e.target.classList.contains("deleteReviewBtn")) {
+            const userDishId = e.target.dataset.userDishId;
+
+            const confirmDelete = confirm("Remove this dish from your past dishes? This will delete your review.");
+            if (!confirmDelete) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/reviews/${userDishId}`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to delete review.");
+                }
+
+                await loadMyDishes();
+            } catch (error) {
+                console.error("Delete review error:", error);
+                alert(error.message);
+            }
+        }
     });
 
     loadMyDishes();

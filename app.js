@@ -46,10 +46,10 @@ const upload = multer({
 
 /* ----------------- cors ------------------ */
 
-// Allow requests from Live Server frontend
+// allow requests from Live Server frontend
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
 
@@ -798,6 +798,127 @@ app.get("/api/user-dishes/history", (req, res) => {
     );
 });
 
+/* ----------------- delete review route ------------------ */
+
+
+console.log("About to register DELETE /api/reviews/:userDishId");
+
+app.delete("/api/reviews/:userDishId", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ message: "Not logged in." });
+    }
+
+    const userId = req.session.userId;
+    const userDishId = req.params.userDishId;
+
+    pool.query(
+        `
+        SELECT dish_id
+        FROM user_dishes
+        WHERE id = ?
+          AND user_id = ?
+          AND dish_status = 'completed'
+        LIMIT 1
+        `,
+        [userDishId, userId],
+        (err, results) => {
+            if (err) {
+                console.error("Delete dish select error:", err);
+                return res.status(500).json({ message: "Error finding completed dish." });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Completed dish not found." });
+            }
+
+            const dishId = results[0].dish_id;
+
+            pool.query(
+                `
+                SELECT file_path
+                FROM photos
+                WHERE user_id = ?
+                  AND dish_id = ?
+                `,
+                [userId, dishId],
+                (photoSelectErr, photoResults) => {
+                    if (photoSelectErr) {
+                        console.error("Photo fetch error:", photoSelectErr);
+                        return res.status(500).json({ message: "Failed to fetch dish photos." });
+                    }
+
+                    photoResults.forEach((photo) => {
+                        const relativePath = photo.file_path.replace(/^\/+/, "");
+                        const fullPath = path.join(__dirname, relativePath);
+
+                        if (fs.existsSync(fullPath)) {
+                            try {
+                                fs.unlinkSync(fullPath);
+                            } catch (fileErr) {
+                                console.error("File delete error:", fileErr);
+                            }
+                        }
+                    });
+
+                    pool.query(
+                        `
+                        DELETE FROM photos
+                        WHERE user_id = ?
+                          AND dish_id = ?
+                        `,
+                        [userId, dishId],
+                        (photoDeleteErr) => {
+                            if (photoDeleteErr) {
+                                console.error("Photo delete error:", photoDeleteErr);
+                                return res.status(500).json({ message: "Failed to delete dish photos." });
+                            }
+
+                            pool.query(
+                                `
+                                DELETE FROM reviews
+                                WHERE user_id = ?
+                                  AND dish_id = ?
+                                `,
+                                [userId, dishId],
+                                (reviewDeleteErr) => {
+                                    if (reviewDeleteErr) {
+                                        console.error("Review delete error:", reviewDeleteErr);
+                                        return res.status(500).json({ message: "Failed to delete review." });
+                                    }
+
+                                    pool.query(
+                                        `
+                                        DELETE FROM user_dishes
+                                        WHERE id = ?
+                                          AND user_id = ?
+                                          AND dish_status = 'completed'
+                                        `,
+                                        [userDishId, userId],
+                                        (userDishDeleteErr, userDishDeleteResult) => {
+                                            if (userDishDeleteErr) {
+                                                console.error("User dish delete error:", userDishDeleteErr);
+                                                return res.status(500).json({ message: "Failed to delete dish history item." });
+                                            }
+
+                                            if (userDishDeleteResult.affectedRows === 0) {
+                                                return res.status(404).json({ message: "Completed dish not found for deletion." });
+                                            }
+
+                                            return res.json({
+                                                message: "Dish removed from past dishes successfully."
+                                            });
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        }
+    );
+});
+
 console.log("About to register /api/user-dishes/:id/complete route");
 
 app.patch("/api/user-dishes/:id/complete", (req, res) => {
@@ -891,7 +1012,7 @@ app.patch("/api/user-dishes/:id/complete", (req, res) => {
 
 console.log("About to register /api/reviews POST route");
 
-app.post("/api/reviews", upload.array("photos", 10), (req, res) => {
+app.post("/api/reviews", upload.array("photos", 4), (req, res) => {
     if (!req.session.userId) {
         return res.status(401).json({
             message: "Not logged in."
@@ -962,6 +1083,12 @@ app.post("/api/reviews", upload.array("photos", 10), (req, res) => {
                     }
 
                     const uploadedFiles = req.files || [];
+
+                    if (uploadedFiles.length > 4) {
+                        return res.status(400).json({
+                            message: "You can upload a maximum of 4 photos."
+                        });
+                    }
 
                     if (uploadedFiles.length === 0) {
                         return completeDishAfterReview(user_dish_id, userId, res, reviewResult.insertId);
