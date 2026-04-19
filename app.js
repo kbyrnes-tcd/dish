@@ -83,10 +83,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET || "local-dev-secret",
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
-        secure: isProduction,
+        secure: isProduction ? "auto" : false,
         httpOnly: true,
-        sameSite: isProduction ? "none" : "lax"
+        sameSite: "lax"
     }
 }));
 
