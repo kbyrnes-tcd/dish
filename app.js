@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 
 const app = express();
+app.set("trust proxy", 1);
 
 console.log("APP FILE LOADED");
 
@@ -48,9 +49,21 @@ const upload = multer({
 
 /* ----------------- cors ------------------ */
 
-// allow requests from Live Server frontend
+
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    const allowedOrigins = [
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "https://https://dish-backend-staging.up.railway.app",
+        "https://dish-production-6e6c.up.railway.app"
+    ];
+
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.header("Access-Control-Allow-Origin", origin);
+    }
+
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
@@ -64,14 +77,16 @@ app.use((req, res, next) => {
 
 /* ----------------- session middleware ------------------ */
 
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(session({
     secret: process.env.SESSION_SECRET || "local-dev-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // true only with HTTPS
+        secure: isProduction,
         httpOnly: true,
-        sameSite: "lax"
+        sameSite: isProduction ? "none" : "lax"
     }
 }));
 

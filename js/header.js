@@ -4,7 +4,7 @@ const avatarContainer = document.getElementById("headerAvatar");
 
 async function loadHeaderAvatar() {
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/auth/me", {
+        const response = await fetch("/api/auth/me", {
             credentials: "include"
         });
 

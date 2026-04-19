@@ -24,23 +24,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderPhotos(photos) {
-    if (!photos || photos.length === 0) {
-        return "";
-    }
+        if (!photos || photos.length === 0) {
+            return "";
+        }
 
-    return `
-        <div class="cardImage">
-            <div class="imageCarousel">
-                ${photos.map((photoPath) => `
-                    <img 
-                        src="http://127.0.0.1:8000${photoPath}" 
-                        alt="Photo of reviewed dish"
-                    >
-                `).join("")}
+        return `
+            <div class="cardImage">
+                <div class="imageCarousel">
+                    ${photos.map((photoPath) => `
+                        <img 
+                            src="${photoPath}" 
+                            alt="Photo of reviewed dish"
+                        >
+                    `).join("")}
+                </div>
             </div>
-        </div>
-    `;
-}
+        `;
+    }
 
     function renderNotes(note) {
         if (!note || note.trim() === "") {
@@ -95,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="dishInfo">
                         <span class="dishName">${escapeHtml(post.dish_name)}</span>
-                        
                     </div>
                 </div>
 
@@ -142,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 sort: currentSort
             });
 
-            const response = await fetch(`http://127.0.0.1:8000/api/feed?${params.toString()}`, {
+            const response = await fetch(`/api/feed?${params.toString()}`, {
                 credentials: "include"
             });
 

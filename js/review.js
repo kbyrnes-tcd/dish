@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const photoPreviewContainer = document.getElementById("photoPreviewContainer");
     const postReviewBtn = document.getElementById("postReviewBtn");
     const reviewNote = document.getElementById("reviewNote");
-    
     const errorMsg = document.getElementById("photoError");
 
     const MAX_FILES = 4;
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadCurrentDish() {
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/user-dishes/current", {
+            const response = await fetch("/api/user-dishes/current", {
                 credentials: "include"
             });
 
@@ -162,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 formData.append("photos", file);
             });
 
-            const response = await fetch("http://127.0.0.1:8000/api/reviews", {
+            const response = await fetch("/api/reviews", {
                 method: "POST",
                 credentials: "include",
                 body: formData

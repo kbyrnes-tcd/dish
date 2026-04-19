@@ -7,7 +7,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 // load current user
 async function loadProfile() {
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/auth/me", {
+        const response = await fetch("/api/auth/me", {
             credentials: "include"
         });
 
@@ -36,7 +36,7 @@ logoutBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     try {
-        await fetch("http://127.0.0.1:8000/api/auth/logout", {
+        await fetch("/api/auth/logout", {
             method: "POST",
             credentials: "include"
         });

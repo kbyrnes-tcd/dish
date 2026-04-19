@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="pastDishPhotos">
                 ${photos.map((photoPath) => `
                     <img 
-                        src="http://127.0.0.1:8000${photoPath}" 
+                        src="${photoPath}" 
                         alt="Photo of reviewed dish" 
                         class="pastDishPhoto"
                     >
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             returnLink.hidden = true;
 
-            const currentResponse = await fetch("http://127.0.0.1:8000/api/user-dishes/current", {
+            const currentResponse = await fetch("/api/user-dishes/current", {
                 credentials: "include"
             });
 
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 returnLink.hidden = false;
             }
 
-            const historyResponse = await fetch("http://127.0.0.1:8000/api/user-dishes/history", {
+            const historyResponse = await fetch("/api/user-dishes/history", {
                 credentials: "include"
             });
 
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirmDelete) return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/reviews/${userDishId}`, {
+                const response = await fetch(`/api/reviews/${userDishId}`, {
                     method: "DELETE",
                     credentials: "include"
                 });
