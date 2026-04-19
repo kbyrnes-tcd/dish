@@ -3,6 +3,7 @@ const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const DBCONFIG = require("./utils/DBCONFIG");
 function requireAuth(req, res, next) {
     if (!req.session.userId) {
@@ -16,6 +17,11 @@ function requireAuth(req, res, next) {
 
 const app = express();
 const PORT = 8000;
+const RESET_LINK_MINUTES = 30;
+const LIVE_SERVER_ORIGINS = new Set([
+    "http://127.0.0.1:5500",
+    "http://localhost:5500"
+]);
 
 console.log("APP FILE LOADED");
 
@@ -26,10 +32,40 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+pool.query(
+    `CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id INT UNSIGNED NOT NULL,
+        token_hash VARCHAR(64) NOT NULL,
+        expires_at DATETIME NOT NULL,
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY token_hash (token_hash),
+        KEY user_id (user_id),
+        CONSTRAINT password_reset_tokens_ibfk_1
+            FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`,
+    (err) => {
+        if (err) {
+            console.error("Password reset table setup error:", err);
+        }
+    }
+);
+
+function getSiteUrl(req) {
+    const origin = req.get("origin");
+    return LIVE_SERVER_ORIGINS.has(origin) ? origin : "http://127.0.0.1:5500";
+}
+
+function hashToken(token) {
+    return crypto.createHash("sha256").update(token).digest("hex");
+}
+
 // Allow requests from Live Server frontend
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
 
@@ -364,196 +400,6 @@ app.post("/api/auth/login", async (req, res) => {
         });
     }
 });
-//manage profile routes
-app.get("/user/profile", requireAuth, (req, res) => {
-    pool.query(
-        `SELECT id, username, user_email, user_xp, user_level, created_at
-         FROM users
-         WHERE id = ?`,
-        [req.session.userId],
-        (err, results) => {
-            if (err) {
-                console.error("Get profile error:", err);
-                return res.status(500).json({ message: "Server error while loading profile." });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ message: "User not found." });
-            }
-
-            const user = results[0];
-            res.json({
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.user_email,
-                    xp: user.user_xp,
-                    level: user.user_level,
-                    created_at: user.created_at
-                }
-            });
-        }
-    );
-});
-//update username and email
-app.put("/user/profile", requireAuth, (req, res) => {
-    let { username, email } = req.body;
-
-    username = username?.trim();
-    email = email?.trim().toLowerCase();
-
-    if (!username || !email) {
-        return res.status(400).json({
-            message: "Username and email are required."
-        });
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernamePattern = /^[A-Za-z0-9_-]+$/;
-    if (!usernamePattern.test(username)) {
-        return res.status(400).json({
-            message: "Username can only contain letters, numbers, hyphens, and underscores."
-        });
-    }
-    if (!emailPattern.test(email)) {
-        return res.status(400).json({
-            message: "Please enter a valid email address."
-        });
-    }
-
-    pool.query(
-        `SELECT id
-         FROM users
-         WHERE (username = ? OR user_email = ?) AND id != ?`,
-        [username, email, req.session.userId],
-        (checkErr, existing) => {
-            if (checkErr) {
-                console.error("Profile duplicate check error:", checkErr);
-                return res.status(500).json({ message: "Server error while checking profile details." });
-            }
-            if (existing.length > 0) {
-                return res.status(400).json({
-                    message: "That username or email is already in use."
-                });
-            }
-
-            pool.query(
-                `UPDATE users
-                 SET username = ?, user_email = ?
-                 WHERE id = ?`,
-                [username, email, req.session.userId],
-                (updateErr) => {
-                    if (updateErr) {
-                        console.error("Profile update error:", updateErr);
-                        return res.status(500).json({ message: "Server error while updating profile." });
-                    }
-                    return res.json({
-                        message: "Profile updated successfully."
-                    });
-                }
-            );
-        }
-    );
-});
-//account password update
-app.put("/user/password", requireAuth, (req, res) => {
-    let { currentPassword, newPassword, confirmPassword } = req.body;
-
-    currentPassword = currentPassword?.trim();
-    newPassword = newPassword?.trim();
-    confirmPassword = confirmPassword?.trim();
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-        return res.status(400).json({
-            message: "All password fields are required."
-        });
-    }
-    if (newPassword.length < 6) {
-        return res.status(400).json({
-            message: "New password must be at least 6 characters long."
-        });
-    }
-    if (newPassword !== confirmPassword) {
-        return res.status(400).json({
-            message: "New passwords do not match."
-        });
-    }
-
-    pool.query(
-        "SELECT user_password FROM users WHERE id = ?",
-        [req.session.userId],
-        async (err, results) => {
-            if (err) {
-                console.error("Password lookup error:", err);
-                return res.status(500).json({ message: "Server error while checking password." });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ message: "User not found." });
-            }
-            try {
-                const isMatch = await bcrypt.compare(currentPassword, results[0].user_password);
-                if (!isMatch) {
-                    return res.status(400).json({
-                        message: "Current password is incorrect."
-                    });
-                }
-
-                const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-                pool.query(
-                    "UPDATE users SET user_password = ? WHERE id = ?",
-                    [hashedPassword, req.session.userId],
-                    (updateErr) => {
-                        if (updateErr) {
-                            console.error("Password update error:", updateErr);
-                            return res.status(500).json({ message: "Server error while updating password." });
-                        }
-                        return res.json({
-                            message: "Password updated successfully."
-                        });
-                    }
-                );
-            } catch (hashErr) {
-                console.error("Password hashing error:", hashErr);
-                return res.status(500).json({ message: "Server error while securing password." });
-            }
-        }
-    );
-});
-//delete account
-app.delete("/user", requireAuth, (req, res) => {
-    const userId = req.session.userId;
-
-    pool.query("DELETE FROM photos WHERE user_id = ?", [userId], (photoErr) => {
-        if (photoErr) {
-            console.error("Delete photos error:", photoErr);
-            return res.status(500).json({ message: "Could not delete account data." });
-        }
-        pool.query("DELETE FROM reviews WHERE user_id = ?", [userId], (reviewErr) => {
-            if (reviewErr) {
-                console.error("Delete reviews error:", reviewErr);
-                return res.status(500).json({ message: "Could not delete account data." });
-            }
-            pool.query("DELETE FROM user_dishes WHERE user_id = ?", [userId], (dishErr) => {
-                if (dishErr) {
-                    console.error("Delete user dishes error:", dishErr);
-                    return res.status(500).json({ message: "Could not delete account data." });
-                }
-                pool.query("DELETE FROM users WHERE id = ?", [userId], (userErr) => {
-                    if (userErr) {
-                        console.error("Delete user error:", userErr);
-                        return res.status(500).json({ message: "Could not delete account." });
-                    }
-
-                    req.session.destroy(() => {
-                        return res.json({
-                            message: "Account deleted successfully."
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
 
 // Recommend a dish
 console.log("About to register /api/dishes/recommend route");
@@ -577,7 +423,6 @@ app.post("/api/dishes/recommend", (req, res) => {
             d.dish_name,
             r.restaurant_name,
             r.restaurant_location,
-            r.restaurant_address,
             r.restaurant_price,
             r.restaurant_cuisine,
             rd.course_type
