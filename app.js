@@ -1,8 +1,10 @@
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
+const fs = require("fs");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 const DBCONFIG = require("./utils/DBCONFIG");
 
 const app = express();
@@ -17,10 +19,37 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+/* ----------------- uploads setup ------------------ */
+
+const uploadsDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+}
+
+app.use("/uploads", express.static(uploadsDir));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        const safeName = file.originalname.replace(/\s+/g, "-");
+        cb(null, `${uniqueSuffix}-${safeName}`);
+    }
+});
+
+const upload = multer({
+    storage
+});
+
+/* ----------------- cors ------------------ */
+
 // Allow requests from Live Server frontend
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
 
@@ -31,28 +60,118 @@ app.use((req, res, next) => {
     next();
 });
 
-//add session middleware
+/* ----------------- session middleware ------------------ */
+
 app.use(session({
     secret: "dish-secret-key-change-this-later",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, //true only with HTTPS
+        secure: false, // true only with HTTPS
         httpOnly: true,
         sameSite: "lax"
     }
 }));
 
-// Middleware
+/* ----------------- middleware ------------------ */
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
+/* ----------------- static files ------------------ */
+
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use(express.static(__dirname));
 
-// Pages
+/* ----------------- helper functions ------------------ */
+
+function getXpValue(price) {
+    if (price === "€") return 50;
+    if (price === "€€") return 100;
+    if (price === "€€€") return 150;
+    return 0;
+}
+
+function completeDishAfterReview(userDishId, userId, res, reviewId) {
+    pool.query(
+        `
+        SELECT 
+            ud.id,
+            r.restaurant_price
+        FROM user_dishes ud
+        JOIN restaurants_dishes rd ON ud.dish_id = rd.id
+        JOIN restaurants r ON rd.restaurant_id = r.id
+        WHERE ud.id = ?
+          AND ud.user_id = ?
+          AND ud.dish_status = 'assigned'
+        LIMIT 1
+        `,
+        [userDishId, userId],
+        (selectErr, results) => {
+            if (selectErr) {
+                console.error("Complete-after-review select error:", selectErr);
+                return res.status(500).json({
+                    message: "Review saved, but failed to find dish for completion."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "Review saved, but assigned dish was not found for completion."
+                });
+            }
+
+            const row = results[0];
+            const xpToAdd = getXpValue(row.restaurant_price);
+
+            pool.query(
+                `
+                UPDATE user_dishes
+                SET dish_status = 'completed',
+                    completed_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                  AND user_id = ?
+                `,
+                [userDishId, userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error("Complete-after-review update error:", updateErr);
+                        return res.status(500).json({
+                            message: "Review saved, but failed to complete dish."
+                        });
+                    }
+
+                    pool.query(
+                        `
+                        UPDATE users
+                        SET user_xp = user_xp + ?
+                        WHERE id = ?
+                        `,
+                        [xpToAdd, userId],
+                        (xpErr) => {
+                            if (xpErr) {
+                                console.error("XP update after review error:", xpErr);
+                                return res.status(500).json({
+                                    message: "Review saved and dish completed, but failed to update XP."
+                                });
+                            }
+
+                            return res.status(201).json({
+                                message: "Review posted successfully.",
+                                reviewId,
+                                xpAdded: xpToAdd
+                            });
+                        }
+                    );
+                }
+            );
+        }
+    );
+}
+
+/* ----------------- pages ------------------ */
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -61,9 +180,19 @@ app.get("/new-dish.html", (req, res) => {
     res.sendFile(path.join(__dirname, "new-dish.html"));
 });
 
+app.get("/my-dishes.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "my-dishes.html"));
+});
+
+app.get("/review.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "review.html"));
+});
+
 app.get("/style.css", (req, res) => {
     res.sendFile(path.join(__dirname, "style.css"));
 });
+
+/* ----------------- basic api routes ------------------ */
 
 // API health check
 app.get("/api/health", (req, res) => {
@@ -139,7 +268,8 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
-// Check whether username already exists
+/* ----------------- auth routes ------------------ */
+
 console.log("About to register /api/auth/check-username route");
 
 app.get("/api/auth/check-username", (req, res) => {
@@ -171,7 +301,6 @@ app.get("/api/auth/check-username", (req, res) => {
     );
 });
 
-// Register a new user
 console.log("About to register /api/auth/register route");
 
 app.post("/api/auth/register", async (req, res) => {
@@ -244,7 +373,6 @@ app.post("/api/auth/register", async (req, res) => {
                                 });
                             }
 
-                            // Set session userId to log in the user immediately after registration
                             req.session.userId = insertResult.insertId;
 
                             return res.status(201).json({
@@ -269,7 +397,6 @@ app.post("/api/auth/register", async (req, res) => {
     }
 });
 
-// Login a user
 console.log("About to register /api/auth/login route");
 
 app.post("/api/auth/login", async (req, res) => {
@@ -342,7 +469,71 @@ app.post("/api/auth/login", async (req, res) => {
     }
 });
 
-// Recommend a dish
+console.log("About to register /api/auth/me route");
+
+app.get("/api/auth/me", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    pool.query(
+        `SELECT id, username, user_email, user_xp, user_level, created_at
+         FROM users
+         WHERE id = ?`,
+        [req.session.userId],
+        (err, results) => {
+            if (err) {
+                console.error("Auth me error:", err);
+                return res.status(500).json({
+                    message: "Server error while fetching current user."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "User not found."
+                });
+            }
+
+            const user = results[0];
+
+            return res.status(200).json({
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.user_email,
+                    xp: user.user_xp,
+                    level: user.user_level,
+                    created_at: user.created_at
+                }
+            });
+        }
+    );
+});
+
+console.log("About to register /api/auth/logout route");
+
+app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Logout error:", err);
+            return res.status(500).json({
+                message: "Failed to log out."
+            });
+        }
+
+        res.clearCookie("connect.sid");
+
+        return res.status(200).json({
+            message: "Logged out successfully."
+        });
+    });
+});
+
+/* ----------------- dish recommendation routes ------------------ */
+
 console.log("About to register /api/dishes/recommend route");
 
 app.post("/api/dishes/recommend", (req, res) => {
@@ -421,7 +612,6 @@ app.post("/api/dishes/recommend", (req, res) => {
     });
 });
 
-// save a recommended dish to the logged-in user
 console.log("About to register /api/user-dishes route");
 
 app.post("/api/user-dishes", (req, res) => {
@@ -460,7 +650,6 @@ app.post("/api/user-dishes", (req, res) => {
     );
 });
 
-// Get current assigned dish for logged-in user
 console.log("About to register /api/user-dishes/current route");
 
 app.get("/api/user-dishes/current", (req, res) => {
@@ -516,7 +705,6 @@ app.get("/api/user-dishes/current", (req, res) => {
     );
 });
 
-// Get completed dish history for logged-in user
 console.log("About to register /api/user-dishes/history route");
 
 app.get("/api/user-dishes/history", (req, res) => {
@@ -565,7 +753,6 @@ app.get("/api/user-dishes/history", (req, res) => {
     );
 });
 
-//mark current dish as completed
 console.log("About to register /api/user-dishes/:id/complete route");
 
 app.patch("/api/user-dishes/:id/complete", (req, res) => {
@@ -609,11 +796,7 @@ app.patch("/api/user-dishes/:id/complete", (req, res) => {
             }
 
             const row = results[0];
-
-            let xpToAdd = 0;
-            if (row.restaurant_price === "€") xpToAdd = 50;
-            if (row.restaurant_price === "€€") xpToAdd = 100;
-            if (row.restaurant_price === "€€€") xpToAdd = 150;
+            const xpToAdd = getXpValue(row.restaurant_price);
 
             pool.query(
                 `
@@ -659,70 +842,116 @@ app.patch("/api/user-dishes/:id/complete", (req, res) => {
     );
 });
 
-//current user route
-console.log("About to register /api/auth/me route");
+/* ----------------- review route ------------------ */
 
-app.get("/api/auth/me", (req, res) => {
+console.log("About to register /api/reviews POST route");
+
+app.post("/api/reviews", upload.array("photos", 10), (req, res) => {
     if (!req.session.userId) {
         return res.status(401).json({
             message: "Not logged in."
         });
     }
 
+    const userId = req.session.userId;
+    const { dish_id, user_dish_id, review_rating, dish_review } = req.body;
+
+    if (!dish_id || !user_dish_id || !review_rating) {
+        return res.status(400).json({
+            message: "Dish ID, user dish ID, and review rating are required."
+        });
+    }
+
+    const numericRating = Number(review_rating);
+
+    if (numericRating < 1 || numericRating > 5) {
+        return res.status(400).json({
+            message: "Review rating must be between 1 and 5."
+        });
+    }
+
     pool.query(
-        `SELECT id, username, user_email, user_xp, user_level, created_at
-         FROM users
-         WHERE id = ?`,
-        [req.session.userId],
-        (err, results) => {
-            if (err) {
-                console.error("Auth me error:", err);
+        `
+        SELECT id, user_id, dish_id, dish_status
+        FROM user_dishes
+        WHERE id = ?
+          AND user_id = ?
+          AND dish_status = 'assigned'
+        LIMIT 1
+        `,
+        [user_dish_id, userId],
+        (selectErr, results) => {
+            if (selectErr) {
+                console.error("Review select error:", selectErr);
                 return res.status(500).json({
-                    message: "Server error while fetching current user."
+                    message: "Failed to validate assigned dish."
                 });
             }
 
             if (results.length === 0) {
                 return res.status(404).json({
-                    message: "User not found."
+                    message: "Assigned dish not found."
                 });
             }
 
-            const user = results[0];
+            const assignedDish = results[0];
 
-            return res.status(200).json({
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.user_email,
-                    xp: user.user_xp,
-                    level: user.user_level,
-                    created_at: user.created_at
+            if (Number(assignedDish.dish_id) !== Number(dish_id)) {
+                return res.status(400).json({
+                    message: "Dish mismatch."
+                });
+            }
+
+            pool.query(
+                `
+                INSERT INTO reviews (user_id, dish_id, review_rating, dish_review)
+                VALUES (?, ?, ?, ?)
+                `,
+                [userId, dish_id, numericRating, dish_review || null],
+                (reviewErr, reviewResult) => {
+                    if (reviewErr) {
+                        console.error("Review insert error:", reviewErr);
+                        return res.status(500).json({
+                            message: "Failed to save review."
+                        });
+                    }
+
+                    const uploadedFiles = req.files || [];
+
+                    if (uploadedFiles.length === 0) {
+                        return completeDishAfterReview(user_dish_id, userId, res, reviewResult.insertId);
+                    }
+
+                    const photoValues = uploadedFiles.map((file) => [
+                        userId,
+                        dish_id,
+                        `/uploads/${file.filename}`
+                    ]);
+
+                    pool.query(
+                        `
+                        INSERT INTO photos (user_id, dish_id, file_path)
+                        VALUES ?
+                        `,
+                        [photoValues],
+                        (photoErr) => {
+                            if (photoErr) {
+                                console.error("Photo insert error:", photoErr);
+                                return res.status(500).json({
+                                    message: "Review saved, but failed to save photos."
+                                });
+                            }
+
+                            return completeDishAfterReview(user_dish_id, userId, res, reviewResult.insertId);
+                        }
+                    );
                 }
-            });
+            );
         }
     );
 });
 
-//log out route
-console.log("About to register /api/auth/logout route");
-
-app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error("Logout error:", err);
-            return res.status(500).json({
-                message: "Failed to log out."
-            });
-        }
-
-        res.clearCookie("connect.sid");
-
-        return res.status(200).json({
-            message: "Logged out successfully."
-        });
-    });
-});
+/* ----------------- start server ------------------ */
 
 app.listen(PORT, () => {
     console.log(`App running on http://127.0.0.1:${PORT}`);
