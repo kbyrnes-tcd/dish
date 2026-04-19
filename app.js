@@ -5,15 +5,18 @@ const fs = require("fs");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
-const DBCONFIG = require("./utils/DBCONFIG");
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 console.log("APP FILE LOADED");
 
 const pool = mysql.createPool({
-    ...DBCONFIG,
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
