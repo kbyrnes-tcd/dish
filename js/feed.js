@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="dishInfo">
                         <span class="dishName">${escapeHtml(post.dish_name)}</span>
-                        <span class="dishType">(${escapeHtml(post.course_type || "Dish")})</span>
+                        
                     </div>
                 </div>
 
