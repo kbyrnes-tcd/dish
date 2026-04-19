@@ -27,6 +27,35 @@ document.addEventListener("DOMContentLoaded", () => {
         return cuisineMap[cuisine] || "assets/image-food-placeholder.jpg";
     }
 
+    function renderStars(rating) {
+        const safeRating = Number(rating) || 0;
+        let starsHtml = "";
+
+        for (let i = 1; i <= 5; i++) {
+            starsHtml += `<span class="pastDishStar ${i <= safeRating ? "filled" : ""}">★</span>`;
+        }
+
+        return starsHtml;
+    }
+
+    function renderPhotos(photos) {
+        if (!photos || photos.length === 0) {
+            return "";
+        }
+
+        return `
+            <div class="pastDishPhotos">
+                ${photos.map((photoPath) => `
+                    <img 
+                        src="http://127.0.0.1:8000${photoPath}" 
+                        alt="Photo of reviewed dish" 
+                        class="pastDishPhoto"
+                    >
+                `).join("")}
+            </div>
+        `;
+    }
+
     function renderCurrentDish(dish) {
         const xpValue = getXpValue(dish.restaurant_price);
         const imageUrl = getCuisineImage(dish.restaurant_cuisine);
@@ -65,34 +94,59 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        pastContainer.innerHTML = dishes.map(dish => `
-            <div class="dishCard pastDishCard">
-                <div class="dishCardTop">
-                    <p class="dishRestaurant">${dish.restaurant_name}</p>
-                    <p>${dish.dish_name}</p>
-                    <p>${dish.restaurant_address || dish.restaurant_location}</p>
+        pastContainer.innerHTML = dishes.map((dish) => {
+            const xpValue = getXpValue(dish.restaurant_price);
+            const imageUrl = getCuisineImage(dish.restaurant_cuisine);
+
+            const hasReviewContent =
+                Number(dish.review_rating) > 0 ||
+                (dish.dish_review && dish.dish_review.trim() !== "") ||
+                (dish.photos && dish.photos.length > 0);
+
+            return `
+                <div class="featuredDishCard pastFeaturedDishCard">
+                    <div class="featuredDishImage" style="background-image: url('${imageUrl}')">
+                        <div class="xpTag">+ ${xpValue} XP</div>
+                    </div>
+
+                    <div class="featuredDishContent">
+                        <p class="featuredDishMeta">
+                            ${dish.restaurant_cuisine} - ${dish.restaurant_price}
+                        </p>
+
+                        <h2 class="featuredDishName">${dish.dish_name}</h2>
+
+                        <div class="featuredDishRestaurantBlock">
+                            <p class="featuredDishRestaurant">${dish.restaurant_name}</p>
+                            <p class="featuredDishAddress">
+                                ${dish.restaurant_address || dish.restaurant_location}
+                            </p>
+                        </div>
+
+                        ${hasReviewContent ? `
+                            <div class="pastDishReviewBlock">
+                                <div class="pastDishStars">
+                                    ${renderStars(dish.review_rating)}
+                                </div>
+
+                                ${dish.dish_review ? `
+                                    <p class="pastDishNote">${dish.dish_review}</p>
+                                ` : ""}
+
+                                ${renderPhotos(dish.photos)}
+
+                                <button 
+                                    class="deleteReviewBtn" 
+                                    data-user-dish-id="${dish.user_dish_id}"
+                                >
+                                    Remove dish
+                                </button>
+                            </div>
+                        ` : ""}
+                    </div>
                 </div>
-
-                <div class="dishDivider"></div>
-
-                <div class="dishMeta">
-                    <div class="dishMetaItem">
-                        <p class="dishMetaLabel">Cuisine Type</p>
-                        <p>${dish.restaurant_cuisine}</p>
-                    </div>
-
-                    <div class="dishMetaItem">
-                        <p class="dishMetaLabel">Location</p>
-                        <p>${dish.restaurant_location}</p>
-                    </div>
-
-                    <div class="dishMetaItem">
-                        <p class="dishMetaLabel">Price Range</p>
-                        <p>${dish.restaurant_price}</p>
-                    </div>
-                </div>
-            </div>
-        `).join("");
+            `;
+        }).join("");
     }
 
     async function loadMyDishes() {
@@ -139,12 +193,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    document.addEventListener("click", (e) => {
-    if (!e.target.classList.contains("triedItBtn")) return;
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("triedItBtn")) {
+            const userDishId = e.target.dataset.userDishId;
+            window.location.href = `review.html?userDishId=${userDishId}`;
+            return;
+        }
 
-    const userDishId = e.target.dataset.userDishId;
-    window.location.href = `review.html?userDishId=${userDishId}`;
-});
+        if (e.target.classList.contains("deleteReviewBtn")) {
+            const userDishId = e.target.dataset.userDishId;
+
+            const confirmDelete = confirm("Remove this dish from your past dishes? This will delete your review.");
+            if (!confirmDelete) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/reviews/${userDishId}`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to delete review.");
+                }
+
+                await loadMyDishes();
+            } catch (error) {
+                console.error("Delete review error:", error);
+                alert(error.message);
+            }
+        }
+    });
 
     loadMyDishes();
 });
