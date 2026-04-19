@@ -3,16 +3,10 @@ const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const DBCONFIG = require("./utils/DBCONFIG");
 
 const app = express();
 const PORT = 8000;
-const RESET_LINK_MINUTES = 30;
-const LIVE_SERVER_ORIGINS = new Set([
-    "http://127.0.0.1:5500",
-    "http://localhost:5500"
-]);
 
 console.log("APP FILE LOADED");
 
@@ -23,46 +17,9 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-pool.query(
-    `CREATE TABLE IF NOT EXISTS password_reset_tokens (
-        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        user_id INT UNSIGNED NOT NULL,
-        token_hash VARCHAR(64) NOT NULL,
-        expires_at DATETIME NOT NULL,
-        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-        UNIQUE KEY token_hash (token_hash),
-        KEY user_id (user_id),
-        CONSTRAINT password_reset_tokens_ibfk_1
-            FOREIGN KEY (user_id) REFERENCES users(id)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`,
-    (err) => {
-        if (err) {
-            console.error("Password reset table setup error:", err);
-        }
-    }
-);
-
-function getSiteUrl(req) {
-    const origin = req.get("origin");
-    return LIVE_SERVER_ORIGINS.has(origin) ? origin : "http://127.0.0.1:5500";
-}
-
-function hashToken(token) {
-    return crypto.createHash("sha256").update(token).digest("hex");
-}
-
 // Allow requests from Live Server frontend
 app.use((req, res, next) => {
-    const origin = req.get("origin");
-
-    if (LIVE_SERVER_ORIGINS.has(origin)) {
-        res.header("Access-Control-Allow-Origin", origin);
-    } else {
-        res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-    }
-
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
@@ -399,171 +356,6 @@ app.post("/api/auth/login", async (req, res) => {
     }
 });
 
-// Request a password reset link
-console.log("About to register /api/auth/forgot-password route");
-
-app.post("/api/auth/forgot-password", (req, res) => {
-    let { email } = req.body;
-
-    email = email?.trim().toLowerCase();
-
-    if (!email) {
-        return res.status(400).json({
-            message: "Email is required."
-        });
-    }
-
-    pool.query(
-        "SELECT id, user_email FROM users WHERE user_email = ?",
-        [email],
-        (selectErr, results) => {
-            if (selectErr) {
-                console.error("Forgot password select error:", selectErr);
-                return res.status(500).json({
-                    message: "Server error while checking account."
-                });
-            }
-
-            if (results.length === 0) {
-                return res.status(404).json({
-                    message: "No account found with that email address."
-                });
-            }
-
-            const user = results[0];
-            const token = crypto.randomBytes(32).toString("hex");
-            const tokenHash = hashToken(token);
-            const expiresAt = new Date(Date.now() + RESET_LINK_MINUTES * 60 * 1000);
-
-            pool.query(
-                "DELETE FROM password_reset_tokens WHERE user_id = ?",
-                [user.id],
-                (deleteErr) => {
-                    if (deleteErr) {
-                        console.error("Forgot password delete token error:", deleteErr);
-                        return res.status(500).json({
-                            message: "Server error while preparing reset link."
-                        });
-                    }
-
-                    pool.query(
-                        `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
-                         VALUES (?, ?, ?)`,
-                        [user.id, tokenHash, expiresAt],
-                        (insertErr) => {
-                            if (insertErr) {
-                                console.error("Forgot password insert token error:", insertErr);
-                                return res.status(500).json({
-                                    message: "Server error while creating reset link."
-                                });
-                            }
-
-                            const resetLink = `${getSiteUrl(req)}/reset-password.html?token=${token}`;
-
-                            console.log(`Password reset link for ${user.user_email}: ${resetLink}`);
-
-                            return res.status(200).json({
-                                message: "Password reset link created.",
-                                resetLink
-                            });
-                        }
-                    );
-                }
-            );
-        }
-    );
-});
-
-// Reset password using a reset token
-console.log("About to register /api/auth/reset-password route");
-
-app.post("/api/auth/reset-password", async (req, res) => {
-    let { token, password } = req.body;
-
-    token = token?.trim();
-    password = password?.trim();
-
-    if (!token || !password) {
-        return res.status(400).json({
-            message: "Reset token and new password are required."
-        });
-    }
-
-    if (password.length < 6) {
-        return res.status(400).json({
-            message: "Password must be at least 6 characters long."
-        });
-    }
-
-    try {
-        const tokenHash = hashToken(token);
-
-        pool.query(
-            `SELECT id, user_id
-             FROM password_reset_tokens
-             WHERE token_hash = ? AND expires_at > NOW()`,
-            [tokenHash],
-            async (selectErr, results) => {
-                if (selectErr) {
-                    console.error("Reset password token select error:", selectErr);
-                    return res.status(500).json({
-                        message: "Server error while checking reset link."
-                    });
-                }
-
-                if (results.length === 0) {
-                    return res.status(400).json({
-                        message: "Reset link is invalid or has expired."
-                    });
-                }
-
-                const resetToken = results[0];
-
-                try {
-                    const hashedPassword = await bcrypt.hash(password, 10);
-
-                    pool.query(
-                        "UPDATE users SET user_password = ? WHERE id = ?",
-                        [hashedPassword, resetToken.user_id],
-                        (updateErr) => {
-                            if (updateErr) {
-                                console.error("Reset password update error:", updateErr);
-                                return res.status(500).json({
-                                    message: "Server error while updating password."
-                                });
-                            }
-
-                            pool.query(
-                                "DELETE FROM password_reset_tokens WHERE user_id = ?",
-                                [resetToken.user_id],
-                                (deleteErr) => {
-                                    if (deleteErr) {
-                                        console.error("Reset password cleanup error:", deleteErr);
-                                    }
-
-                                    return res.status(200).json({
-                                        message: "Password updated successfully."
-                                    });
-                                }
-                            );
-                        }
-                    );
-                } catch (hashErr) {
-                    console.error("Reset password hash error:", hashErr);
-                    return res.status(500).json({
-                        message: "Server error while securing new password."
-                    });
-                }
-            }
-        );
-    } catch (error) {
-        console.error("Reset password route error:", error);
-        return res.status(500).json({
-            message: "Unexpected server error."
-        });
-    }
-});
-
 // Recommend a dish
 console.log("About to register /api/dishes/recommend route");
 
@@ -586,6 +378,7 @@ app.post("/api/dishes/recommend", (req, res) => {
             d.dish_name,
             r.restaurant_name,
             r.restaurant_location,
+            r.restaurant_address,
             r.restaurant_price,
             r.restaurant_cuisine,
             rd.course_type
