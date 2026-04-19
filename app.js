@@ -9,18 +9,6 @@ const multer = require("multer");
 const app = express();
 app.set("trust proxy", 1);
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || "local-dev-secret",
-    resave: false,
-    saveUninitialized: false,
-    proxy: true,
-    cookie: {
-        secure: true,
-        httpOnly: true,
-        sameSite: "lax"
-    }
-}));
-
 console.log("APP FILE LOADED");
 
 const pool = mysql.createPool({
