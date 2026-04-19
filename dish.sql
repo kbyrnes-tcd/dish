@@ -1124,20 +1124,6 @@ INSERT INTO `users` (`id`, `username`, `user_email`, `user_password`, `user_xp`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
-  `id` int UNSIGNED NOT NULL,
-  `user_id` int UNSIGNED NOT NULL,
-  `token_hash` varchar(64) NOT NULL,
-  `expires_at` datetime NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `user_dishes`
 --
 
@@ -1199,14 +1185,6 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `user_email` (`user_email`);
 
 --
--- Indexes for table `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `token_hash` (`token_hash`),
-  ADD KEY `user_id` (`user_id`);
-
---
 -- Indexes for table `user_dishes`
 --
 ALTER TABLE `user_dishes`
@@ -1255,12 +1233,6 @@ ALTER TABLE `users`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `user_dishes`
 --
 ALTER TABLE `user_dishes`
@@ -1290,12 +1262,6 @@ ALTER TABLE `restaurants_dishes`
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`dish_id`) REFERENCES `restaurants_dishes` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD CONSTRAINT `password_reset_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_dishes`
