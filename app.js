@@ -268,6 +268,174 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
+/* ----------------- api feed route ------------------ */
+
+// Public feed
+app.get("/api/feed", (req, res) => {
+    const limit = Math.min(parseInt(req.query.limit, 10) || 15, 50);
+    const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
+    const search = req.query.search?.trim() || "";
+    const sort = req.query.sort?.trim() || "all";
+
+    let orderBy = "ud.completed_at DESC";
+    if (sort === "highest") {
+        orderBy = "rv.review_rating DESC, ud.completed_at DESC";
+    } else if (sort === "recent" || sort === "all") {
+        orderBy = "ud.completed_at DESC";
+    }
+
+    let query = `
+        SELECT
+            ud.id AS user_dish_id,
+            ud.user_id,
+            ud.dish_id,
+            ud.completed_at,
+            u.username,
+            rv.id AS review_id,
+            rv.review_rating,
+            rv.dish_review,
+            d.dish_name,
+            rd.course_type,
+            r.restaurant_name,
+            r.restaurant_location,
+            r.restaurant_address,
+            r.restaurant_price,
+            r.restaurant_cuisine
+        FROM user_dishes ud
+        JOIN users u
+            ON ud.user_id = u.id
+        JOIN reviews rv
+            ON rv.user_id = ud.user_id
+           AND rv.dish_id = ud.dish_id
+        JOIN restaurants_dishes rd
+            ON ud.dish_id = rd.id
+        JOIN dishes d
+            ON rd.dishes_id = d.id
+        JOIN restaurants r
+            ON rd.restaurant_id = r.id
+        WHERE ud.dish_status = 'completed'
+    `;
+
+    const values = [];
+
+    if (search) {
+        query += `
+            AND (
+                d.dish_name LIKE ?
+                OR r.restaurant_name LIKE ?
+                OR r.restaurant_location LIKE ?
+                OR r.restaurant_cuisine LIKE ?
+                OR rd.course_type LIKE ?
+                OR u.username LIKE ?
+            )
+        `;
+
+        const searchTerm = `%${search}%`;
+        values.push(
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            searchTerm,
+            searchTerm
+        );
+    }
+
+    query += `
+        ORDER BY ${orderBy}
+        LIMIT ${limit + 1} OFFSET ${offset}
+    `;
+
+    pool.query(query, values, (err, results) => {
+        if (err) {
+            console.error("Feed query error:", err);
+            return res.status(500).json({
+                message: "Failed to load feed."
+            });
+        }
+
+        if (results.length === 0) {
+            return res.json({
+                posts: [],
+                hasMore: false
+            });
+        }
+
+        const hasMore = results.length > limit;
+        const posts = hasMore ? results.slice(0, limit) : results;
+
+        if (posts.length === 0) {
+            return res.json({
+                posts: [],
+                hasMore: false
+            });
+        }
+
+        const photoConditions = [];
+        const photoValues = [];
+
+        posts.forEach((post) => {
+            photoConditions.push("(user_id = ? AND dish_id = ?)");
+            photoValues.push(post.user_id, post.dish_id);
+        });
+
+        const photosQuery = `
+            SELECT user_id, dish_id, file_path
+            FROM photos
+            WHERE ${photoConditions.join(" OR ")}
+            ORDER BY uploaded_at ASC, id ASC
+        `;
+
+        pool.query(photosQuery, photoValues, (photoErr, photoResults) => {
+            if (photoErr) {
+                console.error("Feed photos query error:", photoErr);
+                return res.status(500).json({
+                    message: "Failed to load feed photos."
+                });
+            }
+
+            const photosByPostKey = {};
+
+            photoResults.forEach((photo) => {
+                const key = `${photo.user_id}-${photo.dish_id}`;
+
+                if (!photosByPostKey[key]) {
+                    photosByPostKey[key] = [];
+                }
+
+                photosByPostKey[key].push(photo.file_path);
+            });
+
+            const feedPosts = posts.map((post) => {
+                const key = `${post.user_id}-${post.dish_id}`;
+
+                return {
+                    review_id: post.review_id,
+                    user_dish_id: post.user_dish_id,
+                    username: post.username,
+                    dish_name: post.dish_name,
+                    course_type: post.course_type,
+                    restaurant_name: post.restaurant_name,
+                    restaurant_location: post.restaurant_location,
+                    restaurant_address: post.restaurant_address,
+                    restaurant_price: post.restaurant_price,
+                    restaurant_cuisine: post.restaurant_cuisine,
+                    review_rating: post.review_rating,
+                    dish_review: post.dish_review,
+                    completed_at: post.completed_at,
+                    photos: photosByPostKey[key] || []
+                };
+            });
+
+            return res.json({
+                posts: feedPosts,
+                hasMore
+            });
+        });
+    });
+});
+
+
 /* ----------------- auth routes ------------------ */
 
 console.log("About to register /api/auth/check-username route");

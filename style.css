@@ -133,6 +133,74 @@ p {
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
 }
 
+/* ----------------- new feed css ------------------ */
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feedFilters {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 5px;
+}
+
+.feedFilters::-webkit-scrollbar {
+    display: none;
+}
+
+.feedFilterBtn {
+    border: none;
+    background: #E7E7FB;
+    color: #454545;
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.feedFilterBtn.active {
+    background: #FF6128;
+    color: #fff;
+}
+
+#feedContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feedPost {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
+    overflow: hidden;
+}
+
+.feedLoadMoreWrap {
+    margin-top: 5px;
+}
+
+.loadMoreBtn {
+    width: 100%;
+    height: 50px;
+    background-color: #E7E7FB;
+    color: #454545;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
 /* ----------------- card profile ------------------ */
 
 .cardProfile {
@@ -161,17 +229,12 @@ p {
     font-weight: 600;
 }
 
-.dishNumber {
-    /* color: blue; */
-    font-weight: 600;
-}
-
 .restaurantName {
     /* color: green; */
     font-weight: 600;
 }
 
-.location, .price, .cuisine {
+.location, .cuisine {
     color: #9F9F9F;
     font-weight: 200;
     font-size: 14px;
@@ -227,7 +290,7 @@ p {
     gap: 4px; /* small space between star and number */
     background-color: #EEEFE7;
     border-radius: 4px;
-    padding: 0 6px 0 5px;
+    padding: 0 10px 0 10px;
     margin-left: 15px;
 }
 
@@ -248,7 +311,7 @@ p {
     color: #454545;
     font-weight: 600;
     font-family: 'Poppins', Arial, sans-serif;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .dishType {
@@ -259,16 +322,26 @@ p {
 /* ----------------- card notes ------------------ */
 
 .cardNotes {
-    padding: 5px 15px 10px 15px;
+    padding: 15px 15px 10px 15px;
 }
 
 .notesHeader h2 {
-    margin-bottom: 1px;
+    margin-bottom: 5px;
 }
 
 .note p {
     line-height: 1.3;
 }
+
+
+
+
+
+
+
+
+
+
 
 /* ----------------- footer content ------------------ */
 
