@@ -139,20 +139,6 @@ app.get("/api/reviews", (req, res) => {
     );
 });
 
-// Get all user dish assignments -- DEBUG in case my user dish doesnt work below 
-// app.get("/api/user-dishes", (req, res) => {
-//     pool.query(
-//         "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
-//         (err, results) => {
-//             if (err) {
-//                 return res.status(500).json({ error: err.message });
-//             }
-
-//             res.json(results);
-//         }
-//     );
-// });
-
 // Check whether username already exists
 console.log("About to register /api/auth/check-username route");
 
