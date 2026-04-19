@@ -835,6 +835,58 @@ p {
     cursor: pointer;
 }
 
+/* -------------------- past dishes ----------------- */
+
+.pastFeaturedDishCard {
+    margin-bottom: 25px;
+}
+
+.pastDishReviewBlock {
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #EFEFEF;
+}
+
+.pastDishStars {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.pastDishStar {
+    font-size: 35px;
+    line-height: 1;
+    color: #D3D3D3;
+}
+
+.pastDishStar.filled {
+    color: #FF6128;
+}
+
+.pastDishNote {
+    margin: 0 0 14px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #454545;
+    white-space: pre-wrap;
+}
+
+.pastDishPhotos {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pastDishPhoto {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #E9E9E9;
+}
+
+
 /* -------------------- review page -------------------- */
 /* -----------------------------------------------------*/
 
@@ -951,6 +1003,11 @@ p {
     cursor: pointer;
 }
 
+.uploadPhotosBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .photoPreviewContainer {
     display: flex;
     gap: 10px;
@@ -958,6 +1015,14 @@ p {
     margin-top: 15px;
     margin-bottom: 25px;
     /* border: 1px solid blue; */
+}
+
+.photoError {
+    font-size: 13px;
+    color: #FF3B30;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    min-height: 16px;
 }
 
 .photoPreviewWrapper {

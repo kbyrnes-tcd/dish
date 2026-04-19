@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const photoPreviewContainer = document.getElementById("photoPreviewContainer");
     const postReviewBtn = document.getElementById("postReviewBtn");
     const reviewNote = document.getElementById("reviewNote");
+    
+    const errorMsg = document.getElementById("photoError");
+
+    const MAX_FILES = 4;
 
     let selectedRating = 0;
     let currentDish = null;
@@ -26,6 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     uploadPhotosBtn.addEventListener("click", () => {
+        if (selectedFiles.length >= MAX_FILES) {
+            errorMsg.textContent = `Max ${MAX_FILES} photos allowed`;
+            return;
+        }
+
+        errorMsg.textContent = "";
         reviewPhotosInput.click();
     });
 
@@ -63,17 +73,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectedFiles.splice(index, 1);
                 syncFileInput();
                 renderPhotoPreviews();
+                errorMsg.textContent = "";
             });
 
             wrapper.appendChild(img);
             wrapper.appendChild(removeBtn);
             photoPreviewContainer.appendChild(wrapper);
         });
+
+        uploadPhotosBtn.disabled = selectedFiles.length >= MAX_FILES;
     }
 
     reviewPhotosInput.addEventListener("change", () => {
         const newFiles = Array.from(reviewPhotosInput.files || []);
-        selectedFiles = [...selectedFiles, ...newFiles];
+
+        if (selectedFiles.length + newFiles.length > MAX_FILES) {
+            errorMsg.textContent = `Max ${MAX_FILES} photos allowed`;
+        } else {
+            errorMsg.textContent = "";
+        }
+
+        const remainingSlots = MAX_FILES - selectedFiles.length;
+        const filesToAdd = newFiles.slice(0, remainingSlots);
+
+        selectedFiles = [...selectedFiles, ...filesToAdd];
 
         syncFileInput();
         renderPhotoPreviews();
