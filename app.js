@@ -7,7 +7,6 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 
 const app = express();
-const PORT = process.env.PORT || 8000;
 
 console.log("APP FILE LOADED");
 
@@ -1316,6 +1315,7 @@ app.post("/api/reviews", upload.array("photos", 4), (req, res) => {
 /* ----------------- start server ------------------ */
 
 const HOST = "0.0.0.0";
+const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, HOST, () => {
     console.log(`App running on http://${HOST}:${PORT}`);
