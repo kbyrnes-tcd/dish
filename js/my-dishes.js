@@ -139,30 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    document.addEventListener("click", async (e) => {
-        if (!e.target.classList.contains("triedItBtn")) return;
+    document.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("triedItBtn")) return;
 
-        const userDishId = e.target.dataset.userDishId;
-
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/api/user-dishes/${userDishId}/complete`, {
-                method: "PATCH",
-                credentials: "include"
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to complete dish.");
-            }
-
-            await loadMyDishes();
-
-        } catch (error) {
-            console.error("Complete dish error:", error);
-            alert(error.message);
-        }
-    });
+    const userDishId = e.target.dataset.userDishId;
+    window.location.href = `review.html?userDishId=${userDishId}`;
+});
 
     loadMyDishes();
 });

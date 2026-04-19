@@ -870,6 +870,10 @@ p {
     color: #454545;
 }
 
+.reviewTitle span {
+    display: block;
+}
+
 .reviewSection {
     margin-bottom: 25px;
     /* border: solid 1px blue; */
