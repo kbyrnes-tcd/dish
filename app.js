@@ -631,21 +631,40 @@ app.post("/api/user-dishes", (req, res) => {
     }
 
     pool.query(
-        `INSERT INTO user_dishes (user_id, dish_id, dish_status)
-         VALUES (?, ?, 'assigned')`,
-        [userId, dish_id],
-        (err, result) => {
-            if (err) {
-                console.error("Save user dish error:", err);
+        `
+        DELETE FROM user_dishes
+        WHERE user_id = ?
+          AND dish_status = 'assigned'
+        `,
+        [userId],
+        (deleteErr) => {
+            if (deleteErr) {
+                console.error("Delete existing assigned dish error:", deleteErr);
                 return res.status(500).json({
-                    message: "Failed to save dish to user profile."
+                    message: "Failed to replace current dish."
                 });
             }
 
-            return res.status(201).json({
-                message: "Dish saved successfully.",
-                userDishId: result.insertId
-            });
+            pool.query(
+                `
+                INSERT INTO user_dishes (user_id, dish_id, dish_status)
+                VALUES (?, ?, 'assigned')
+                `,
+                [userId, dish_id],
+                (insertErr, result) => {
+                    if (insertErr) {
+                        console.error("Save user dish error:", insertErr);
+                        return res.status(500).json({
+                            message: "Failed to save dish to user profile."
+                        });
+                    }
+
+                    return res.status(201).json({
+                        message: "Dish saved successfully.",
+                        userDishId: result.insertId
+                    });
+                }
+            );
         }
     );
 });
