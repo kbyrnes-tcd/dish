@@ -730,11 +730,16 @@ app.get("/api/user-dishes/history", (req, res) => {
             r.restaurant_address,
             r.restaurant_price,
             r.restaurant_cuisine,
-            rd.course_type
+            rd.course_type,
+            rv.review_rating,
+            rv.dish_review
         FROM user_dishes ud
         JOIN restaurants_dishes rd ON ud.dish_id = rd.id
         JOIN dishes d ON rd.dishes_id = d.id
         JOIN restaurants r ON rd.restaurant_id = r.id
+        LEFT JOIN reviews rv 
+            ON rv.user_id = ud.user_id
+           AND rv.dish_id = ud.dish_id
         WHERE ud.user_id = ?
           AND ud.dish_status = 'completed'
         ORDER BY ud.completed_at DESC, ud.assigned_at DESC
@@ -748,7 +753,47 @@ app.get("/api/user-dishes/history", (req, res) => {
                 });
             }
 
-            res.json(results);
+            if (results.length === 0) {
+                return res.json([]);
+            }
+
+            const dishIds = results.map((row) => row.dish_id);
+
+            pool.query(
+                `
+                SELECT dish_id, file_path
+                FROM photos
+                WHERE user_id = ?
+                  AND dish_id IN (?)
+                ORDER BY uploaded_at ASC, id ASC
+                `,
+                [userId, dishIds],
+                (photoErr, photoResults) => {
+                    if (photoErr) {
+                        console.error("History photos query error:", photoErr);
+                        return res.status(500).json({
+                            message: "Failed to fetch dish photos."
+                        });
+                    }
+
+                    const photosByDishId = {};
+
+                    photoResults.forEach((photo) => {
+                        if (!photosByDishId[photo.dish_id]) {
+                            photosByDishId[photo.dish_id] = [];
+                        }
+
+                        photosByDishId[photo.dish_id].push(photo.file_path);
+                    });
+
+                    const historyWithPhotos = results.map((dish) => ({
+                        ...dish,
+                        photos: photosByDishId[dish.dish_id] || []
+                    }));
+
+                    return res.json(historyWithPhotos);
+                }
+            );
         }
     );
 });
