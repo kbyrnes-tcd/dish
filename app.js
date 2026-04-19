@@ -9,6 +9,18 @@ const multer = require("multer");
 const app = express();
 app.set("trust proxy", 1);
 
+app.use(session({
+    secret: process.env.SESSION_SECRET || "local-dev-secret",
+    resave: false,
+    saveUninitialized: false,
+    proxy: true,
+    cookie: {
+        secure: true,
+        httpOnly: true,
+        sameSite: "lax"
+    }
+}));
+
 console.log("APP FILE LOADED");
 
 const pool = mysql.createPool({
@@ -51,16 +63,9 @@ const upload = multer({
 
 
 app.use((req, res, next) => {
-    const allowedOrigins = [
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "https://https://dish-backend-staging.up.railway.app",
-        "https://dish-production-6e6c.up.railway.app"
-    ];
-
     const origin = req.headers.origin;
 
-    if (allowedOrigins.includes(origin)) {
+    if (origin) {
         res.header("Access-Control-Allow-Origin", origin);
     }
 
