@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedRating = 0;
     let currentDish = null;
+    let selectedFiles = [];
 
     function updateStarDisplay(rating) {
         starButtons.forEach((button) => {
@@ -28,52 +29,86 @@ document.addEventListener("DOMContentLoaded", () => {
         reviewPhotosInput.click();
     });
 
-    reviewPhotosInput.addEventListener("change", () => {
+    function syncFileInput() {
+        const dataTransfer = new DataTransfer();
+
+        selectedFiles.forEach((file) => {
+            dataTransfer.items.add(file);
+        });
+
+        reviewPhotosInput.files = dataTransfer.files;
+    }
+
+    function renderPhotoPreviews() {
         photoPreviewContainer.innerHTML = "";
 
-        const files = Array.from(reviewPhotosInput.files || []);
-
-        files.forEach((file) => {
+        selectedFiles.forEach((file, index) => {
             const imageUrl = URL.createObjectURL(file);
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "photoPreviewWrapper";
+
             const img = document.createElement("img");
             img.src = imageUrl;
             img.alt = "Selected review photo";
             img.className = "photoPreviewItem";
-            photoPreviewContainer.appendChild(img);
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "photoRemoveBtn";
+            removeBtn.innerHTML = "&times;";
+            removeBtn.setAttribute("aria-label", "Remove photo");
+
+            removeBtn.addEventListener("click", () => {
+                selectedFiles.splice(index, 1);
+                syncFileInput();
+                renderPhotoPreviews();
+            });
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            photoPreviewContainer.appendChild(wrapper);
         });
+    }
+
+    reviewPhotosInput.addEventListener("change", () => {
+        const newFiles = Array.from(reviewPhotosInput.files || []);
+        selectedFiles = [...selectedFiles, ...newFiles];
+
+        syncFileInput();
+        renderPhotoPreviews();
     });
 
     async function loadCurrentDish() {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/user-dishes/current", {
-            credentials: "include"
-        });
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/user-dishes/current", {
+                credentials: "include"
+            });
 
-        console.log("status:", response.status);
+            console.log("status:", response.status);
 
-        if (response.status === 401) {
-            window.location.href = "login.html";
-            return;
-        }
+            if (response.status === 401) {
+                window.location.href = "login.html";
+                return;
+            }
 
-        if (response.status === 404) {
-            reviewDishName.textContent = "your dish";
-            return;
-        }
+            if (response.status === 404) {
+                reviewDishName.textContent = "your dish?";
+                return;
+            }
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to load dish.");
-        }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to load dish.");
+            }
 
-        const currentDish = await response.json();
-        console.log("dish:", currentDish);
+            currentDish = await response.json();
+            console.log("dish:", currentDish);
 
-        reviewDishName.textContent = currentDish.dish_name + "?";
-
+            reviewDishName.textContent = currentDish.dish_name + "?";
         } catch (error) {
             console.error("Review page load error:", error);
-            reviewDishName.textContent = "your dish";
+            reviewDishName.textContent = "your dish?";
         }
     }
 
@@ -84,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             selectedRating,
             note,
             currentDish,
-            photos: reviewPhotosInput.files
+            photos: selectedFiles
         });
 
         if (!selectedRating) {
