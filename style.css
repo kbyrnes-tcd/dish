@@ -127,11 +127,73 @@ p {
         /* border: 1px solid blue; */
 }
 
+/* ----------------- new feed css ------------------ */
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feedFilters {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 5px;
+}
+
+.feedFilters::-webkit-scrollbar {
+    display: none;
+}
+
+.feedFilterBtn {
+    border: none;
+    background: #E7E7FB;
+    color: #454545;
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.feedFilterBtn.active {
+    background: #FF6128;
+    color: #fff;
+}
+
+#feedContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .feedPost {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 1, 15, 0.1);
+    overflow: hidden;
 }
+
+.feedLoadMoreWrap {
+    margin-top: 5px;
+}
+
+.loadMoreBtn {
+    width: 100%;
+    height: 50px;
+    background-color: #E7E7FB;
+    color: #454545;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 
 /* ----------------- card profile ------------------ */
 
@@ -161,17 +223,12 @@ p {
     font-weight: 600;
 }
 
-.dishNumber {
-    /* color: blue; */
-    font-weight: 600;
-}
-
 .restaurantName {
     /* color: green; */
     font-weight: 600;
 }
 
-.location, .price, .cuisine {
+.location, .cuisine {
     color: #9F9F9F;
     font-weight: 200;
     font-size: 14px;
@@ -191,10 +248,10 @@ p {
     padding: 0 15px 15px 15px;
     scroll-behavior: smooth;
 
-    /* Hide scrollbar in firefox */
+    /* hide scrollbar in firefox */
     scrollbar-width: none;
 
-    /* Hide scrollbar in IE/edge */
+    /* hide scrollbar in IE/edge */
     -ms-overflow-style: none;
 }
 
@@ -217,28 +274,33 @@ p {
 
 .cardRating {
     display: flex;
-    gap: 20px; /* space bw rating and dish info */
-    align-items: center; /* align children vertically */
-    margin-bottom: 6px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+    /* border: 1px solid red; */
 }
 
 .rating {
     display: flex;
-    gap: 4px; /* small space between star and number */
-    background-color: #EEEFE7;
+    gap: 6px; /* small space between star and number */
+    background-color: #E7E7FB;
     border-radius: 4px;
-    padding: 0 6px 0 5px;
+    padding: 8px 15px 8px 10px;
     margin-left: 15px;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .star {
-    width: 17px;
-    height: 17px;
+    width: 20px;
+    height: 20px;
+    margin-top: -2px;
 }
 
 .dishInfo {
     display: flex;
-    gap: 4px; /* space between dish name and type */
+    gap: 2px; /* space between dish name and type */
     align-items: baseline; /* align text on baseline */
     font-family: 'Poppins', Arial, sans-serif;
     font-size: 14px;
@@ -248,7 +310,7 @@ p {
     color: #454545;
     font-weight: 600;
     font-family: 'Poppins', Arial, sans-serif;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .dishType {
@@ -259,16 +321,18 @@ p {
 /* ----------------- card notes ------------------ */
 
 .cardNotes {
-    padding: 5px 15px 10px 15px;
+    padding: 0px 15px 10px 15px;
+    /* border: 1px solid green; */
 }
 
 .notesHeader h2 {
-    margin-bottom: 1px;
+    margin-bottom: 5px;
 }
 
 .note p {
     line-height: 1.3;
 }
+
 
 /* ----------------- footer content ------------------ */
 
