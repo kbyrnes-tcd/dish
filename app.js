@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 /* ----------------- session middleware ------------------ */
 
 app.use(session({
-    secret: "dish-secret-key-change-this-later",
+    secret: process.env.SESSION_SECRET || "local-dev-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
