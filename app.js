@@ -3,7 +3,6 @@ const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const DBCONFIG = require("./utils/DBCONFIG");
 function requireAuth(req, res, next) {
     if (!req.session.userId) {
@@ -17,11 +16,6 @@ function requireAuth(req, res, next) {
 
 const app = express();
 const PORT = 8000;
-const RESET_LINK_MINUTES = 30;
-const LIVE_SERVER_ORIGINS = new Set([
-    "http://127.0.0.1:5500",
-    "http://localhost:5500"
-]);
 
 console.log("APP FILE LOADED");
 
@@ -31,36 +25,6 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-
-pool.query(
-    `CREATE TABLE IF NOT EXISTS password_reset_tokens (
-        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        user_id INT UNSIGNED NOT NULL,
-        token_hash VARCHAR(64) NOT NULL,
-        expires_at DATETIME NOT NULL,
-        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-        UNIQUE KEY token_hash (token_hash),
-        KEY user_id (user_id),
-        CONSTRAINT password_reset_tokens_ibfk_1
-            FOREIGN KEY (user_id) REFERENCES users(id)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`,
-    (err) => {
-        if (err) {
-            console.error("Password reset table setup error:", err);
-        }
-    }
-);
-
-function getSiteUrl(req) {
-    const origin = req.get("origin");
-    return LIVE_SERVER_ORIGINS.has(origin) ? origin : "http://127.0.0.1:5500";
-}
-
-function hashToken(token) {
-    return crypto.createHash("sha256").update(token).digest("hex");
-}
 
 // Allow requests from Live Server frontend
 app.use((req, res, next) => {
@@ -183,20 +147,6 @@ app.get("/api/reviews", (req, res) => {
         }
     );
 });
-
-// Get all user dish assignments -- DEBUG in case my user dish doesnt work below 
-// app.get("/api/user-dishes", (req, res) => {
-//     pool.query(
-//         "SELECT * FROM user_dishes ORDER BY assigned_at DESC",
-//         (err, results) => {
-//             if (err) {
-//                 return res.status(500).json({ error: err.message });
-//             }
-
-//             res.json(results);
-//         }
-//     );
-// });
 
 // Check whether username already exists
 console.log("About to register /api/auth/check-username route");
@@ -423,6 +373,7 @@ app.post("/api/dishes/recommend", (req, res) => {
             d.dish_name,
             r.restaurant_name,
             r.restaurant_location,
+            r.restaurant_address,
             r.restaurant_price,
             r.restaurant_cuisine,
             rd.course_type
