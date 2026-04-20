@@ -31,6 +31,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return username.trim().charAt(0).toUpperCase() || "?";
     }
 
+    function renderPostAvatar(post) {
+        const username = escapeHtml(post.username);
+        const initial = getUserInitial(post.username);
+
+        if (post.avatarUrl) {
+            return `
+                <div class="profilePic profileAvatar" aria-label="Profile avatar for ${username}">
+                    <img 
+                        src="${escapeHtml(post.avatarUrl)}" 
+                        alt="Profile avatar for ${username}"
+                        class="profileAvatarImage"
+                        onerror="this.parentElement.innerHTML='<span class=&quot;profileAvatarLetter&quot;>${initial}</span>'"
+                    >
+                </div>
+            `;
+        }
+
+        return `
+            <div class="profilePic profileAvatar" aria-label="Default avatar for ${username}">
+                <span class="profileAvatarLetter">${initial}</span>
+            </div>
+        `;
+    }
+
+
     function renderPhotos(photos) {
         if (!photos || photos.length === 0) {
             return "";
@@ -71,9 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return `
             <div class="feedPost">
                 <div class="cardProfile">
-                    <div class="profilePic profileAvatar" aria-label="Default avatar for ${escapeHtml(post.username)}">
-                        <span class="profileAvatarLetter">${getUserInitial(post.username)}</span>
-                    </div>
+                    ${renderPostAvatar(post)}
 
                     <div class="profileText">
 
