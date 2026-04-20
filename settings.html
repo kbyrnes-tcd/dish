@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <!--SEO data here in the description-->
     <meta name="description" content="A public feed for Dish"/> 
     <title>Settings</title>
     
-    <!--Bootstrap link-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!--CSS link-->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"/>
 </head>
 
-
 <body>
-    <div class="app"> <!--lock to mobile dimensions -->
+    <div class="app">
 
-        <!--Header content-->
         <div class="containerHeader">
             <div class="logo">
                 <a href="index.html">
-                <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
+                    <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
                 </a>
             </div>
             <div class="headerAvatar" id="headerAvatar">
@@ -31,103 +25,95 @@
             </div>
         </div>
 
-        <!--body -->
         <div class="containerMain">
-        <div class="manageProfileSection">
-            <h1>Settings</h1>
-            <p class="subtitle">Manage your app preferences.</p>
+            <div class="manageProfileSection">
+                <h1>Settings</h1>
+                <p class="subtitle">Manage your app preferences.</p>
 
-            <div class="settingsCard">
-                <div class="settingsRow settingsRowToggle">
-                    <div>
-                        <p class="settingsLabel">Notifications</p>
-                        <p class="settingsSubtext">Receive reminders and app updates.</p>
+                <div class="settingsCard">
+                    <div class="settingsRow settingsRowToggle">
+                        <div>
+                            <p class="settingsLabel">Notifications</p>
+                            <p class="settingsSubtext">Receive reminders and app updates.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="notificationsToggle">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" id="notificationsToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
 
-                <div class="settingsRow settingsRowToggle">
-                    <div>
-                        <p class="settingsLabel">Privacy</p>
-                        <p class="settingsSubtext">Keep your profile more private.</p>
+                    <div class="settingsRow settingsRowToggle">
+                        <div>
+                            <p class="settingsLabel">Privacy</p>
+                            <p class="settingsSubtext">Keep your profile more private.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="privacyToggle">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" id="privacyToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
 
-                <div class="settingsRow">
-                    <div>
-                        <p class="settingsLabel">App Preferences</p>
-                        <p class="settingsSubtext">Choose how Dish feels to use.</p>
+                    <div class="settingsRow">
+                        <div>
+                            <p class="settingsLabel">App Preferences</p>
+                            <p class="settingsSubtext">Choose how Dish feels to use.</p>
+                        </div>
+                    </div>
+
+                    <div class="settingsRow">
+                        <label for="themeSelect" class="settingsLabel settingsSelectLabel">Theme</label>
+                        <select id="themeSelect" class="settingsSelect">
+                            <option value="light">Default</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+
+                    <div class="settingsRow settingsRowToggle">
+                        <div>
+                            <p class="settingsLabel">Reduced Motion</p>
+                            <p class="settingsSubtext">Use fewer visual animations.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="motionToggle">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
 
-                <div class="settingsRow">
-                    <label for="themeSelect" class="settingsLabel settingsSelectLabel">Theme</label>
-                    <select id="themeSelect" class="settingsSelect">
-                        <option value="light">Default</option>
-                    </select>
-                </div>
+                <button type="button" class="formButton" id="saveSettingsBtn">Save Settings</button>
+                <div id="settingsMessage"></div>
 
-                <div class="settingsRow settingsRowToggle">
-                    <div>
-                        <p class="settingsLabel">Reduced Motion</p>
-                        <p class="settingsSubtext">Use fewer visual animations.</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="motionToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <a href="profile.html" class="formButton settingsBackButton">Back to Profile</a>
             </div>
-
-            <button type="button" class="formButton" id="saveSettingsBtn">Save Settings</button>
-            <div id="settingsMessage"></div>
-
-            <a href="profile.html" class="formButton settingsBackButton">Back to Profile</a>
         </div>
+
+        <div class="containerFooter">
+            <div class="footerNav">
+                <a href="index.html" class="navItem">
+                    <img src="assets/icon-feed.svg" alt="Feed icon">
+                    <span>Feed</span>
+                </a>
+
+                <a href="new-dish.html" class="navItem">
+                    <img src="assets/icon-new.svg" alt="New dish icon">
+                    <span>New Dish</span>
+                </a>
+
+                <a href="my-dishes.html" class="navItem">
+                    <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
+                    <span>My Dishes</span>
+                </a>
+
+                <a href="profile.html" class="navItem active">
+                    <img src="assets/icon-profile.svg" alt="Profile icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+
     </div>
 
-    <!--Footer content-->
-    <div class="containerFooter">
-        <div class="footerNav">
-
-            <!-- Feed -->
-            <a href="index.html" class="navItem">
-                <img src="assets/icon-feed.svg" alt="Feed icon">
-                <span>Feed</span>
-            </a>
-
-            <!-- New Dish -->
-            <a href="new-dish.html" class="navItem">
-                <img src="assets/icon-new.svg" alt="New dish icon">
-                <span>New Dish</span>
-            </a>
-
-            <!-- My Dishes -->
-            <a href="my-dishes.html" class="navItem">
-                <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
-                <span>My Dishes</span>
-            </a>
-
-            <!-- Profile -->
-            <a href="profile.html" class="navItem active">
-                <img src="assets/icon-profile.svg" alt="Profile icon">
-                <span>Profile</span>
-            </a>
-        </div>
-    </div>
-
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="/js/profile-mgmt.js"></script>
-
-</div> <!--lock to mobile dimensions - close div -->
+    <script src="/js/settings.js"></script>
 </body>
 </html>
