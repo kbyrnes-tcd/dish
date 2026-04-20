@@ -93,7 +93,32 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/js", express.static(path.join(__dirname, "js")));
-app.use(express.static(__dirname));
+app.use("/uploads", express.static(uploadsDir));
+
+/* ----------------- pages ------------------ */
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "welcome.html"));
+});
+
+app.get("/new-dish.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "new-dish.html"));
+});
+
+app.get("/my-dishes.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "my-dishes.html"));
+});
+
+app.get("/review.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "review.html"));
+});
+
+app.get("/style.css", (req, res) => {
+    res.sendFile(path.join(__dirname, "style.css"));
+});
+
+app.use(express.static(__dirname, { index: false }));
+
 
 /* ----------------- helper functions ------------------ */
 
@@ -181,27 +206,6 @@ function completeDishAfterReview(userDishId, userId, res, reviewId) {
     );
 }
 
-/* ----------------- pages ------------------ */
-
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "welcome.html"));
-});
-
-app.get("/new-dish.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "new-dish.html"));
-});
-
-app.get("/my-dishes.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "my-dishes.html"));
-});
-
-app.get("/review.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "review.html"));
-});
-
-app.get("/style.css", (req, res) => {
-    res.sendFile(path.join(__dirname, "style.css"));
-});
 
 /* ----------------- basic api routes ------------------ */
 
