@@ -23,6 +23,14 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/'/g, "&#039;");
     }
 
+    function getUserInitial(username) {
+        if (!username || typeof username !== "string") {
+            return "?";
+        }
+
+        return username.trim().charAt(0).toUpperCase() || "?";
+    }
+
     function renderPhotos(photos) {
         if (!photos || photos.length === 0) {
             return "";
@@ -63,13 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return `
             <div class="feedPost">
                 <div class="cardProfile">
-                    <img 
-                        src="assets/profile-pic-placeholder.jpg" 
-                        alt="Profile picture of a user" 
-                        class="profilePic"
-                    >
+                    <div class="profilePic profileAvatar" aria-label="Default avatar for ${escapeHtml(post.username)}">
+                        <span class="profileAvatarLetter">${getUserInitial(post.username)}</span>
+                    </div>
 
                     <div class="profileText">
+
                         <p>
                             <span class="username">${escapeHtml(post.username)}</span> ranked a dish
                         </p>
