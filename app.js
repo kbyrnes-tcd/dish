@@ -1,3 +1,5 @@
+const fs = require("fs");
+const multer = require("multer");
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
@@ -16,6 +18,26 @@ function requireAuth(req, res, next) {
 
 const app = express();
 const PORT = 8000;
+const uploadDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `user-${req.session.userId}-${Date.now()}${ext}`);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }
+});
 
 console.log("APP FILE LOADED");
 
@@ -63,6 +85,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use(express.static(__dirname));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Pages
 app.get("/", (req, res) => {
@@ -357,9 +380,9 @@ app.post("/api/auth/login", async (req, res) => {
 //manage profile routes
 app.get("/user/profile", requireAuth, (req, res) => {
     pool.query(
-        `SELECT id, username, user_email, user_xp, user_level, created_at
-         FROM users
-         WHERE id = ?`,
+        `SELECT id, username, user_email, user_avatar, user_xp, user_level, created_at
+        FROM users
+        WHERE id = ?`,
         [req.session.userId],
         (err, results) => {
             if (err) {
@@ -376,6 +399,7 @@ app.get("/user/profile", requireAuth, (req, res) => {
                     id: user.id,
                     username: user.username,
                     email: user.user_email,
+                    avatar: user.user_avatar,
                     xp: user.user_xp,
                     level: user.user_level,
                     created_at: user.created_at
@@ -442,6 +466,34 @@ app.put("/user/profile", requireAuth, (req, res) => {
                     });
                 }
             );
+        }
+    );
+});
+
+app.put("/user/avatar", requireAuth, upload.single("avatar"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({
+            message: "Please choose an image."
+        });
+    }
+
+    const avatarPath = `/uploads/${req.file.filename}`;
+
+    pool.query(
+        "UPDATE users SET user_avatar = ? WHERE id = ?",
+        [avatarPath, req.session.userId],
+        (err) => {
+            if (err) {
+                console.error("Avatar update error:", err);
+                return res.status(500).json({
+                    message: "Server error while updating avatar."
+                });
+            }
+
+            return res.json({
+                message: "Avatar updated successfully.",
+                avatar: avatarPath
+            });
         }
     );
 });
@@ -875,7 +927,7 @@ app.get("/api/auth/me", (req, res) => {
     }
 
     pool.query(
-        `SELECT id, username, user_email, user_xp, user_level, created_at
+        `SELECT id, username, user_email, user_avatar, user_xp, user_level, created_at
          FROM users
          WHERE id = ?`,
         [req.session.userId],
@@ -900,6 +952,7 @@ app.get("/api/auth/me", (req, res) => {
                     id: user.id,
                     username: user.username,
                     email: user.user_email,
+                    avatar: user.user_avatar,
                     xp: user.user_xp,
                     level: user.user_level,
                     created_at: user.created_at

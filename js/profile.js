@@ -1,8 +1,10 @@
 // profile logic
 const usernameEl = document.getElementById("profileUsername");
 const emailEl = document.getElementById("profileEmail");
-const avatarLetterEl = document.getElementById("avatarLetter");
+const profileAvatar = document.getElementById("profileAvatar");
 const logoutBtn = document.getElementById("logoutBtn");
+const xpTextEl = document.getElementById("profileXpText");
+const levelTextEl = document.getElementById("profileLevelText");
 
 // load current user
 async function loadProfile() {
@@ -12,7 +14,6 @@ async function loadProfile() {
         });
 
         const data = await response.json();
-
         if (!response.ok) {
             throw new Error(data.message || "Not logged in");
         }
@@ -21,11 +22,17 @@ async function loadProfile() {
 
         usernameEl.textContent = user.username;
         emailEl.textContent = user.email;
-        avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
+        xpTextEl.textContent = `XP: ${user.xp}`;
+        levelTextEl.textContent = `Level ${user.level}`;
+
+        if (user.avatar) {
+            profileAvatar.innerHTML = `<img src="http://127.0.0.1:8000${user.avatar}" alt="Avatar">`;
+        } else {
+            profileAvatar.innerHTML = `<span class="avatar-letter" id="avatarLetter">${user.username.charAt(0).toUpperCase()}</span>`;
+        }
 
     } catch (error) {
         console.error("Profile load error:", error);
-
         // redirect if not logged in
         window.location.href = "login.html";
     }
@@ -34,7 +41,6 @@ async function loadProfile() {
 // logout
 logoutBtn.addEventListener("click", async (e) => {
     e.preventDefault();
-
     try {
         await fetch("http://127.0.0.1:8000/api/auth/logout", {
             method: "POST",

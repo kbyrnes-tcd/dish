@@ -41,15 +41,34 @@ async function loadProfileData() {
 }
 
 if (avatarInput) {
-    avatarInput.addEventListener("change", () => {
+    avatarInput.addEventListener("change", async () => {
         const file = avatarInput.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = (e) => {
             avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar preview">`;
         };
         reader.readAsDataURL(file);
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/user/avatar", {
+                method: "PUT",
+                credentials: "include",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                setMessage(profileMessage, data.message || "Could not update avatar.", "errorMessage");
+                return;
+            }
+            setMessage(profileMessage, data.message || "Avatar updated successfully.", "successMessage");
+        } catch (error) {
+            console.error("Avatar upload error:", error);
+            setMessage(profileMessage, error.message || "Something went wrong.", "errorMessage");
+        }
     });
 }
 
