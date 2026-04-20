@@ -729,7 +729,6 @@ p {
     transition: all 0.2s ease;
 }
 
-/* dropdown scroll bar smoothing */
 .dropdownMenu::-webkit-scrollbar {
     width: 6px;
 }
