@@ -1590,7 +1590,7 @@ p {
 .profileInput {
     width: 100%;
     padding: 10px 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid #ddd;
     font-size: 14px;
     margin-bottom: 15px;
@@ -1599,15 +1599,15 @@ p {
 
 .profileInput:focus {
     outline: none;
-    border-color: #bbb;
+    border: 3px solid #FF6128;
 }
 
 .profileButton {
     width: 100%;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 25px;
     border: none;
-    background-color: #454545;
+    background-color: #FF6128;
     color: white;
     font-size: 14px;
     font-weight: 500;
