@@ -7,6 +7,9 @@ const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 const profileUsernameInput = document.getElementById("profileUsernameInput");
 const profileEmailInput = document.getElementById("profileEmailInput");
 
+const avatarInput = document.getElementById("avatarInput");
+const avatarPreview = document.getElementById("avatarPreview");
+
 const profileDetailsMessage = document.getElementById("profileDetailsMessage");
 const passwordMessage = document.getElementById("passwordMessage");
 const deleteAccountMessage = document.getElementById("deleteAccountMessage");
@@ -24,6 +27,27 @@ async function safeJson(response) {
     } catch {
         return {};
     }
+}
+
+function getAvatarLetter(username = "") {
+    return (username?.charAt(0) || "?").toUpperCase();
+}
+
+function updateHeaderAvatarLetter(username = "") {
+    if (!headerAvatarLetter) return;
+    headerAvatarLetter.textContent = getAvatarLetter(username);
+}
+
+function showAvatarLetterFallback(username = "") {
+    if (!avatarPreview) return;
+
+    avatarPreview.innerHTML = `<span id="avatarPreviewLetter">${getAvatarLetter(username)}</span>`;
+}
+
+function showAvatarPreview(src) {
+    if (!avatarPreview) return;
+
+    avatarPreview.innerHTML = `<img src="${src}" alt="Avatar preview">`;
 }
 
 /* ----------------- load current user ------------------ */
@@ -45,7 +69,7 @@ async function loadCurrentUser() {
             throw new Error(data.message || "Failed to load user.");
         }
 
-        const user = data.user;
+        const user = data.user || {};
 
         if (profileUsernameInput) {
             profileUsernameInput.value = user.username || "";
@@ -55,13 +79,72 @@ async function loadCurrentUser() {
             profileEmailInput.value = user.email || "";
         }
 
-        if (headerAvatarLetter) {
-            headerAvatarLetter.textContent =
-                (user.username?.charAt(0) || "?").toUpperCase();
+        updateHeaderAvatarLetter(user.username || "");
+
+        if (user.avatarUrl) {
+            showAvatarPreview(user.avatarUrl);
+        } else {
+            showAvatarLetterFallback(user.username || "");
         }
     } catch (error) {
         console.error("Load current user error:", error);
     }
+}
+
+/* ----------------- upload avatar ------------------ */
+
+if (avatarInput) {
+    avatarInput.addEventListener("change", async () => {
+        const file = avatarInput.files[0];
+        if (!file) return;
+
+        const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+        if (!allowedTypes.includes(file.type)) {
+            setMessage(
+                profileDetailsMessage,
+                "Please choose a PNG, JPEG, or WEBP image.",
+                "errorMessage"
+            );
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            showAvatarPreview(e.target.result);
+        };
+        reader.readAsDataURL(file);
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        try {
+            const response = await fetch("/api/user/avatar", {
+                method: "PUT",
+                credentials: "include",
+                body: formData
+            });
+
+            const data = await safeJson(response);
+
+            if (!response.ok) {
+                setMessage(
+                    profileDetailsMessage,
+                    data.message || "Could not update avatar.",
+                    "errorMessage"
+                );
+                return;
+            }
+
+            setMessage(
+                profileDetailsMessage,
+                data.message || "Avatar updated successfully.",
+                "successMessage"
+            );
+        } catch (error) {
+            console.error("Avatar upload error:", error);
+            setMessage(profileDetailsMessage, "Something went wrong.", "errorMessage");
+        }
+    });
 }
 
 /* ----------------- update profile ------------------ */
@@ -97,12 +180,17 @@ if (profileDetailsForm) {
                 return;
             }
 
-            if (headerAvatarLetter) {
-                headerAvatarLetter.textContent = username.charAt(0).toUpperCase();
+            updateHeaderAvatarLetter(username);
+
+            if (!avatarPreview?.querySelector("img")) {
+                showAvatarLetterFallback(username);
             }
 
-            setMessage(profileDetailsMessage, data.message || "Profile updated successfully.", "successMessage");
-
+            setMessage(
+                profileDetailsMessage,
+                data.message || "Profile updated successfully.",
+                "successMessage"
+            );
         } catch (error) {
             console.error("Profile update error:", error);
             setMessage(profileDetailsMessage, "Something went wrong.", "errorMessage");
@@ -160,7 +248,6 @@ if (passwordForm) {
 
             passwordForm.reset();
             setMessage(passwordMessage, data.message || "Password updated successfully.", "successMessage");
-
         } catch (error) {
             console.error("Password update error:", error);
             setMessage(passwordMessage, "Something went wrong.", "errorMessage");
@@ -194,7 +281,6 @@ if (deleteAccountBtn) {
             }
 
             window.location.href = "welcome.html";
-
         } catch (error) {
             console.error("Delete account error:", error);
             setMessage(deleteAccountMessage, "Something went wrong.", "errorMessage");

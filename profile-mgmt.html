@@ -26,9 +26,9 @@
                 <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
                 </a>
             </div>
-            <div class="headerAvatar" id="headerAvatar">
+            <!-- <div class="headerAvatar" id="headerAvatar">
                 <span class="headerAvatarLetter" id="headerAvatarLetter">?</span>
-            </div>
+            </div> -->
         </div>
 
         <!--body -->
@@ -40,6 +40,13 @@
             <p class="subtitle">Update your account details.</p>
 
             <form id="profileDetailsForm">
+                <div class="manageAvatarWrap">
+                    <div class="avatar-preview" id="avatarPreview">
+                        <span id="avatarPreviewLetter">?</span>
+                    </div>
+                    <input type="file" id="avatarInput" class="profileInput" accept="image/png,image/jpeg,image/webp">
+                </div>
+
                 <label class="profileLabel">Username</label>
                 <input type="text" id="profileUsernameInput" class="profileInput">
 

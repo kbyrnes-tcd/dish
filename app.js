@@ -44,7 +44,19 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-    storage
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error("Only PNG, JPEG, and WEBP files are allowed."));
+        }
+
+        cb(null, true);
+    }
 });
 
 /* ----------------- cors ------------------ */
@@ -335,6 +347,7 @@ app.get("/api/feed", (req, res) => {
             ud.dish_id,
             ud.completed_at,
             u.username,
+            u.avatar_url,
             rv.id AS review_id,
             rv.review_rating,
             rv.dish_review,
@@ -457,6 +470,7 @@ app.get("/api/feed", (req, res) => {
                     review_id: post.review_id,
                     user_dish_id: post.user_dish_id,
                     username: post.username,
+                    avatarUrl: post.avatar_url,
                     dish_name: post.dish_name,
                     course_type: post.course_type,
                     restaurant_name: post.restaurant_name,
@@ -691,9 +705,9 @@ app.get("/api/auth/me", (req, res) => {
     }
 
     pool.query(
-        `SELECT id, username, user_email, user_xp, user_level, created_at
-         FROM users
-         WHERE id = ?`,
+        `SELECT id, username, user_email, user_xp, user_level, created_at, avatar_url
+        FROM users
+        WHERE id = ?`,
         [req.session.userId],
         (err, results) => {
             if (err) {
@@ -718,7 +732,8 @@ app.get("/api/auth/me", (req, res) => {
                     email: user.user_email,
                     xp: user.user_xp,
                     level: user.user_level,
-                    created_at: user.created_at
+                    created_at: user.created_at,
+                    avatarUrl: user.avatar_url
                 }
             });
         }
@@ -821,6 +836,74 @@ app.put("/api/user/profile", requireAuth, (req, res) => {
         }
     );
 });
+
+/* ----------------- avatar routes ------------------ */
+
+app.put("/api/user/avatar", requireAuth, upload.single("avatar"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({
+            message: "No avatar file uploaded."
+        });
+    }
+
+    const avatarPath = `/uploads/${req.file.filename}`;
+
+    pool.query(
+        `
+        SELECT avatar_url
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+        `,
+        [req.session.userId],
+        (selectErr, results) => {
+            if (selectErr) {
+                console.error("Avatar select error:", selectErr);
+                return res.status(500).json({
+                    message: "Could not check current avatar."
+                });
+            }
+
+            const oldAvatarPath = results[0]?.avatar_url;
+
+            pool.query(
+                `
+                UPDATE users
+                SET avatar_url = ?
+                WHERE id = ?
+                `,
+                [avatarPath, req.session.userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error("Avatar update error:", updateErr);
+                        return res.status(500).json({
+                            message: "Could not update avatar."
+                        });
+                    }
+
+                    if (oldAvatarPath) {
+                        const relativePath = oldAvatarPath.replace(/^\/+/, "");
+                        const fullPath = path.join(__dirname, relativePath);
+
+                        if (fs.existsSync(fullPath)) {
+                            try {
+                                fs.unlinkSync(fullPath);
+                            } catch (fileErr) {
+                                console.error("Old avatar delete error:", fileErr);
+                            }
+                        }
+                    }
+
+                    return res.json({
+                        message: "Avatar updated successfully.",
+                        avatarUrl: avatarPath
+                    });
+                }
+            );
+        }
+    );
+});
+
 
 app.put("/api/user/password", requireAuth, async (req, res) => {
     let { currentPassword, newPassword, confirmPassword } = req.body;
