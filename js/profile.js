@@ -1,6 +1,6 @@
 const usernameEl = document.getElementById("profileUsername");
 const emailEl = document.getElementById("profileEmail");
-const avatarLetterEl = document.getElementById("avatarLetter");
+const avatarContainer = document.getElementById("profileAvatar");
 const logoutBtn = document.getElementById("logoutBtn");
 
 const xpTextEl = document.getElementById("profileXpText");
@@ -23,6 +23,38 @@ const XP_PER_LEVEL = 250;
 let readyTimer;
 
 const sparkColors = ["#ffd34d", "#FF6128", "#7bc67b", "#5db7de", "#f47aa3"];
+
+function getAvatarLetter(username = "") {
+    return (username?.charAt(0) || "?").toUpperCase();
+}
+
+function renderDefaultAvatar(username = "") {
+    if (!avatarContainer) return;
+
+    avatarContainer.innerHTML = `
+        <span class="avatar-letter" id="avatarLetter">${getAvatarLetter(username)}</span>
+    `;
+}
+
+function renderImageAvatar(avatarUrl, username = "") {
+    if (!avatarContainer) return;
+
+    avatarContainer.innerHTML = `
+        <img
+            src="${avatarUrl}"
+            alt="Profile avatar"
+            class="profileAvatarImage"
+        >
+    `;
+
+    const img = avatarContainer.querySelector(".profileAvatarImage");
+
+    if (img) {
+        img.addEventListener("error", () => {
+            renderDefaultAvatar(username);
+        });
+    }
+}
 
 function getLevelFromXp(xp) {
     return Math.floor((Number(xp) || 0) / XP_PER_LEVEL) + 1;
@@ -218,8 +250,10 @@ async function loadProfile() {
             emailEl.textContent = user.email;
         }
 
-        if (avatarLetterEl) {
-            avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
+        if (user.avatarUrl) {
+            renderImageAvatar(user.avatarUrl, user.username || "");
+        } else {
+            renderDefaultAvatar(user.username || "");
         }
 
         const params = new URLSearchParams(window.location.search);
