@@ -15,8 +15,18 @@ function renderXp(userXp, userLevel) {
     const xpIntoLevel = safeXp % xpPerLevel;
     const progressPercent = (xpIntoLevel / xpPerLevel) * 100;
 
+    console.log("xpTextEl:", xpTextEl);
+    console.log("levelTextEl:", levelTextEl);
+    console.log("xpBarEl:", xpBarEl);
+    console.log("Rendering XP:", {
+        totalXp: safeXp,
+        level: safeLevel,
+        xpIntoLevel,
+        progressPercent
+    });
+
     if (xpTextEl) {
-        xpTextEl.textContent = `XP: ${xpIntoLevel}/${xpPerLevel}`;
+        xpTextEl.textContent = `XP: ${safeXp} total • ${xpIntoLevel}/${xpPerLevel}`;
     }
 
     if (levelTextEl) {
@@ -35,6 +45,7 @@ async function loadProfile() {
         });
 
         const data = await response.json();
+        console.log("Profile API response:", data);
 
         if (response.status === 401) {
             window.location.href = "login.html";
@@ -66,7 +77,6 @@ async function loadProfile() {
     }
 }
 
-
 if (logoutBtn) {
     logoutBtn.addEventListener("click", async (e) => {
         e.preventDefault();
@@ -78,7 +88,6 @@ if (logoutBtn) {
             });
 
             window.location.href = "welcome.html";
-
         } catch (error) {
             console.error("Logout error:", error);
         }
