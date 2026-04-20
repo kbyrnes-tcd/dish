@@ -1,35 +1,35 @@
 //-------------------------- dropdown logic ----------------------------//
 
-const dropdowns = document.querySelectorAll('.dropdown');
+const dropdowns = document.querySelectorAll(".dropdown");
 
 dropdowns.forEach(dropdown => {
-    const toggle = dropdown.querySelector('.dropdownToggle');
-    const label = dropdown.querySelector('.dropdownLabel');
-    const selectAll = dropdown.querySelector('.selectAll');
+    const toggle = dropdown.querySelector(".dropdownToggle");
+    const label = dropdown.querySelector(".dropdownLabel");
+    const selectAll = dropdown.querySelector(".selectAll");
     const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]:not(.selectAll)');
     const defaultText = label.textContent;
 
     function getAllLabel(defaultText) {
-        if (defaultText === 'Select Cuisine(s)') return 'All cuisines';
-        if (defaultText === 'Select Location(s)') return 'All locations';
-        if (defaultText === 'Select Price Range') return 'All price ranges';
-        if (defaultText === 'Select Course Type') return 'All course types';
-        return 'All selected';
+        if (defaultText === "Select Cuisine(s)") return "All cuisines";
+        if (defaultText === "Select Location(s)") return "All locations";
+        if (defaultText === "Select Price Range") return "All price ranges";
+        if (defaultText === "Select Course Type") return "All course types";
+        return "All selected";
     }
 
-    toggle.addEventListener('click', (e) => {
+    toggle.addEventListener("click", (e) => {
         e.stopPropagation();
 
         dropdowns.forEach(d => {
-            if (d !== dropdown) d.classList.remove('open');
+            if (d !== dropdown) d.classList.remove("open");
         });
 
-        dropdown.classList.toggle('open');
+        dropdown.classList.toggle("open");
     });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
         if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('open');
+            dropdown.classList.remove("open");
         }
     });
 
@@ -41,19 +41,16 @@ dropdowns.forEach(dropdown => {
             label.textContent = defaultText;
             selectAll.checked = false;
             selectAll.indeterminate = false;
-
         } else if (selected.length === checkboxes.length) {
             label.textContent = allLabel;
             selectAll.checked = true;
             selectAll.indeterminate = false;
-
         } else if (selected.length <= 2) {
             label.textContent = selected
                 .map(cb => cb.parentElement.textContent.trim())
-                .join(', ');
+                .join(", ");
             selectAll.checked = false;
             selectAll.indeterminate = true;
-
         } else {
             label.textContent = `${selected.length} selected`;
             selectAll.checked = false;
@@ -61,7 +58,7 @@ dropdowns.forEach(dropdown => {
         }
     }
 
-    selectAll.addEventListener('change', () => {
+    selectAll.addEventListener("change", () => {
         checkboxes.forEach(cb => {
             cb.checked = selectAll.checked;
         });
@@ -70,7 +67,7 @@ dropdowns.forEach(dropdown => {
     });
 
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
+        cb.addEventListener("change", () => {
             updateLabel();
         });
     });
@@ -129,7 +126,7 @@ getDishBtn.addEventListener("click", async () => {
     try {
         console.log("About to fetch recommendation...");
 
-        const response = await fetch("http://127.0.0.1:8000/api/dishes/recommend", {
+        const response = await fetch("/api/dishes/recommend", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -158,7 +155,7 @@ getDishBtn.addEventListener("click", async () => {
 
         console.log("Recommended dish:", data);
 
-        const saveResponse = await fetch("http://127.0.0.1:8000/api/user-dishes", {
+        const saveResponse = await fetch("/api/user-dishes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -176,9 +173,6 @@ getDishBtn.addEventListener("click", async () => {
             throw new Error(saveData?.message || "Failed to save dish.");
         }
 
-        // localStorage.setItem("currentDish", JSON.stringify(data));
-
-        //redirect
         window.location.href = "my-dishes.html";
 
     } catch (err) {
