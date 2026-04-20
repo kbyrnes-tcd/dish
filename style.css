@@ -1167,23 +1167,6 @@ p {
     padding: 0 20px;
 }
 
-/* .avatar-container {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin: 0 auto 15px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.avatar-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-} */
-
 .avatar-container {
     width: 120px;
     height: 120px;
@@ -1260,9 +1243,276 @@ p {
 
 .progress-bar-fill {
     height: 100%;
-    width: 65%;
+    width: 0;
     background-color: #FF6128;
     border-radius: 5px;
+    transition: width 1.1s ease;
+}
+
+.levelOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.42);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.levelOverlay.show {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.levelBox {
+    position: relative;
+    width: min(335px, 100%);
+    min-height: 356px;
+    overflow: hidden;
+    padding: 24px 20px 20px;
+    border-radius: 12px;
+    background: #F7F7FB;
+    text-align: center;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+}
+
+.levelClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: #e7e7fb;
+    color: #555;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.kicker {
+    margin-bottom: 4px;
+    color: #FF6128;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.levelBox h2 {
+    margin: 0 0 6px;
+    color: #454545;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.levelText {
+    margin-bottom: 24px;
+    color: #878787;
+    font-size: 14px;
+}
+
+.levelLabels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.levelTrack {
+    position: relative;
+    height: 16px;
+    border-radius: 8px;
+    background: #d1d1d1;
+}
+
+.levelFill {
+    width: 0;
+    height: 100%;
+    border-radius: 8px;
+    background: #FF6128;
+}
+
+.turtle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 92px;
+    height: 68px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%) scale(0.82);
+}
+
+.turtle img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.levelOverlay.show .levelFill {
+    animation: fillLevel 1.7s ease forwards;
+}
+
+.levelOverlay.show .turtle {
+    animation: walkTurtle 1.7s ease forwards, turtleBounce 0.42s ease 1.7s 2;
+}
+
+.tapHint {
+    min-height: 18px;
+    margin: 58px 0 12px;
+    font-size: 12px;
+    color: #878787;
+}
+
+.popLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.sparkPop,
+.ribbonPop,
+.foodPop {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%) scale(0) rotate(var(--turn));
+}
+
+.sparkPop {
+    width: 14px;
+    height: 14px;
+    background: #ffd34d;
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 2% 35%, 39% 35%);
+    animation: popSpark 1.25s ease-out forwards;
+}
+
+.ribbonPop {
+    width: 8px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--color);
+    animation: popSpark 1.25s ease-out forwards;
+}
+
+.foodPop {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    animation: popFood 1.65s ease-out forwards;
+}
+
+.foodPop img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.continueButton {
+    width: 100%;
+    height: 46px;
+    border: none;
+    border-radius: 8px;
+    background: #FF6128;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.levelOverlay.ready .continueButton {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes fillLevel {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes walkTurtle {
+    from {
+        left: 0;
+        transform: translateY(-50%) scale(0.82);
+    }
+
+    to {
+        left: 100%;
+        transform: translate(-100%, -50%) scale(0.9);
+    }
+}
+
+@keyframes turtleBounce {
+    0%, 100% {
+        margin-top: 0;
+    }
+
+    50% {
+        margin-top: -8px;
+    }
+}
+
+@keyframes popFood {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0) rotate(var(--turn));
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(var(--turn));
+    }
+
+    62% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.12) rotate(var(--turn));
+    }
+}
+
+@keyframes popSpark {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0) rotate(var(--turn));
+    }
+
+    18% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(var(--turn));
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.05) rotate(var(--turn));
+    }
 }
 
 /* menu card */

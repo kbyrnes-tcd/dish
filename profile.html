@@ -110,6 +110,33 @@
             </a>
         </div>
     </div>
+    
+    <div class="levelOverlay" id="levelOverlay" aria-hidden="true">
+        <div class="levelBox" role="dialog" aria-modal="true" aria-labelledby="levelTitle">
+            <button type="button" class="levelClose" id="levelClose" aria-label="Close">x</button>
+            <p class="kicker">Nice work</p>
+            <h2 id="levelTitle">Level Up!</h2>
+            <p class="levelText" id="levelText">Level 1 to Level 2</p>
+
+            <div class="levelLabels">
+                <span id="oldLevel">Level 1</span>
+                <span id="newLevel">Level 2</span>
+            </div>
+
+            <div class="levelTrack">
+                <div class="levelFill"></div>
+                <button type="button" class="turtle" id="turtle" aria-label="Tap turtle">
+                    <img src="assets/turtle.png" alt="Dish turtle">
+                </button>
+            </div>
+
+            <p class="tapHint" id="tapHint">Congratulations!</p>
+            <div class="popLayer" id="popLayer" aria-hidden="true"></div>
+            <button type="button" class="continueButton" id="continueButton">Continue</button>
+        </div>
+    </div>
+
+<audio id="levelSound" src="assets/level-up.mp3" preload="auto"></audio>
 
 <script src="/js/profile.js"></script>
 

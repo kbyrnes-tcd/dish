@@ -173,8 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(data.message || "Failed to post review.");
             }
 
-            alert(`Review posted successfully. You earned ${data.xpAdded} XP!`);
-            window.location.href = "my-dishes.html";
+            window.location.href = `profile.html?xpGained=${encodeURIComponent(data.xpAdded)}`;
         } catch (error) {
             console.error("Post review error:", error);
             alert(error.message);
