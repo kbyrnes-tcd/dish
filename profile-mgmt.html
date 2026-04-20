@@ -17,24 +17,77 @@
 
 
 <body>
-<div class="app"> <!--lock to mobile dimensions -->
+    <div class="app"> <!--lock to mobile dimensions -->
 
-    <!--Header content-->
-    <div class="containerHeader">
-        <div class="logo">
-            <a href="index.html">
-            <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
-            </a>
+        <!--Header content-->
+        <div class="containerHeader">
+            <div class="logo">
+                <a href="index.html">
+                <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
+                </a>
+            </div>
+            <div class="headerAvatar" id="headerAvatar">
+                <span class="headerAvatarLetter" id="headerAvatarLetter">?</span>
+            </div>
         </div>
-        <div class="headerAvatar" id="headerAvatar">
-            <span class="headerAvatarLetter" id="headerAvatarLetter">?</span>
-        </div>
-    </div>
 
-    <!--body -->
-    <div class="containerMain">
-            
-            
+        <!--body -->
+        <div class="containerMain">
+
+        <!-- Update Profile -->
+        <div class="profileSection">
+            <h1>Manage Profile</h1>
+            <p class="subtitle">Update your account details.</p>
+
+            <form id="profileDetailsForm">
+                <label class="profileLabel">Username</label>
+                <input type="text" id="profileUsernameInput" class="profileInput">
+
+                <label class="profileLabel">Email</label>
+                <input type="email" id="profileEmailInput" class="profileInput">
+
+                <button type="submit" class="profileButton">Save Details</button>
+                <p id="profileDetailsMessage" class="profileMessage"></p>
+            </form>
+        </div>
+
+        <div class="profileDivider"></div>
+
+        <!-- Change Password -->
+        <div class="profileSection">
+            <h2>Change Password</h2>
+
+            <form id="passwordForm">
+                <label class="profileLabel">Current Password</label>
+                <input type="password" id="currentPassword" class="profileInput">
+
+                <label class="profileLabel">New Password</label>
+                <input type="password" id="newPassword" class="profileInput">
+
+                <label class="profileLabel">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="profileInput">
+
+                <button type="submit" class="profileButton">Update Password</button>
+                <p id="passwordMessage" class="profileMessage"></p>
+            </form>
+        </div>
+
+        <div class="profileDivider"></div>
+
+        <!-- Delete Account -->
+        <div class="profileSection">
+            <h2>Delete Account</h2>
+            <p class="profileDeleteText">
+                This will permanently delete your account.
+            </p>
+
+            <button id="deleteAccountBtn" class="profileDeleteButton">
+                Delete Account
+            </button>
+
+            <p id="deleteAccountMessage" class="profileMessage"></p>
+        </div>
+
     </div>
 
     <!--Footer content-->

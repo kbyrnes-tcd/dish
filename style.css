@@ -1572,3 +1572,86 @@ p {
     font-size: 12px;
     color: #aaa;
 }
+
+/* ----------------- profile mgmt ------------------ */
+/* ------------------------------------------------- */
+
+.profileSection {
+    margin-bottom: 30px;
+}
+
+.profileLabel {
+    display: block;
+    font-size: 12px;
+    color: #878787;
+    margin-bottom: 6px;
+}
+
+.profileInput {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    margin-bottom: 15px;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+.profileInput:focus {
+    outline: none;
+    border-color: #bbb;
+}
+
+.profileButton {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #454545;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.profileButton:hover {
+    opacity: 0.9;
+}
+
+.profileDivider {
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 30px 0;
+}
+
+.profileMessage {
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 18px;
+}
+
+.profileMessage.errorMessage {
+    color: #e63946;
+}
+
+.profileMessage.successMessage {
+    color: #2a9d71;
+}
+
+.profileDeleteButton {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #e63946;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profileDeleteText {
+    font-size: 12px;
+    color: #878787;
+    margin-bottom: 10px;
+}
