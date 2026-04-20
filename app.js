@@ -57,7 +57,7 @@ app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", origin);
     }
 
-    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
 
@@ -120,6 +120,16 @@ app.use(express.static(__dirname, { index: false }));
 
 
 /* ----------------- helper functions ------------------ */
+
+function requireAuth(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            message: "Not logged in."
+        });
+    }
+
+    next();
+}
 
 function getDishXpValue(price) {
     if (price === "€") return 50;
@@ -732,6 +742,240 @@ app.post("/api/auth/logout", (req, res) => {
             message: "Logged out successfully."
         });
     });
+});
+
+/* ----------------- profile management routes ------------------ */
+
+app.put("/api/user/profile", requireAuth, (req, res) => {
+    let { username, email } = req.body;
+
+    username = username?.trim();
+    email = email?.trim().toLowerCase();
+
+    if (!username || !email) {
+        return res.status(400).json({
+            message: "Username and email are required."
+        });
+    }
+
+    const usernamePattern = /^[A-Za-z0-9_-]+$/;
+
+    if (!usernamePattern.test(username)) {
+        return res.status(400).json({
+            message: "Username can only contain letters, numbers, hyphens, and underscores."
+        });
+    }
+
+    pool.query(
+        `
+        SELECT id, username, user_email
+        FROM users
+        WHERE (username = ? OR user_email = ?)
+          AND id != ?
+        `,
+        [username, email, req.session.userId],
+        (selectErr, results) => {
+            if (selectErr) {
+                console.error("Profile uniqueness check error:", selectErr);
+                return res.status(500).json({
+                    message: "Server error while checking profile details."
+                });
+            }
+
+            if (results.length > 0) {
+                const existingUser = results[0];
+
+                if (existingUser.username === username) {
+                    return res.status(400).json({
+                        message: "Username already exists."
+                    });
+                }
+
+                if (existingUser.user_email === email) {
+                    return res.status(400).json({
+                        message: "An account with this email already exists."
+                    });
+                }
+            }
+
+            pool.query(
+                `
+                UPDATE users
+                SET username = ?, user_email = ?
+                WHERE id = ?
+                `,
+                [username, email, req.session.userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error("Profile update error:", updateErr);
+                        return res.status(500).json({
+                            message: "Could not update profile."
+                        });
+                    }
+
+                    return res.json({
+                        message: "Profile updated successfully."
+                    });
+                }
+            );
+        }
+    );
+});
+
+app.put("/api/user/password", requireAuth, async (req, res) => {
+    let { currentPassword, newPassword, confirmPassword } = req.body;
+
+    currentPassword = currentPassword?.trim();
+    newPassword = newPassword?.trim();
+    confirmPassword = confirmPassword?.trim();
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({
+            message: "All password fields are required."
+        });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({
+            message: "New password must be at least 6 characters long."
+        });
+    }
+
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({
+            message: "New passwords do not match."
+        });
+    }
+
+    pool.query(
+        `
+        SELECT user_password
+        FROM users
+        WHERE id = ?
+        LIMIT 1
+        `,
+        [req.session.userId],
+        async (selectErr, results) => {
+            if (selectErr) {
+                console.error("Password select error:", selectErr);
+                return res.status(500).json({
+                    message: "Could not verify current password."
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    message: "User not found."
+                });
+            }
+
+            try {
+                const isMatch = await bcrypt.compare(currentPassword, results[0].user_password);
+
+                if (!isMatch) {
+                    return res.status(400).json({
+                        message: "Current password is incorrect."
+                    });
+                }
+
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+                pool.query(
+                    `
+                    UPDATE users
+                    SET user_password = ?
+                    WHERE id = ?
+                    `,
+                    [hashedPassword, req.session.userId],
+                    (updateErr) => {
+                        if (updateErr) {
+                            console.error("Password update error:", updateErr);
+                            return res.status(500).json({
+                                message: "Could not update password."
+                            });
+                        }
+
+                        return res.json({
+                            message: "Password updated successfully."
+                        });
+                    }
+                );
+            } catch (error) {
+                console.error("Password change error:", error);
+                return res.status(500).json({
+                    message: "Something went wrong while updating password."
+                });
+            }
+        }
+    );
+});
+
+app.delete("/api/user", requireAuth, (req, res) => {
+    const userId = req.session.userId;
+
+    pool.query(
+        "DELETE FROM photos WHERE user_id = ?",
+        [userId],
+        (photosDeleteErr) => {
+            if (photosDeleteErr) {
+                console.error("Delete account photos error:", photosDeleteErr);
+                return res.status(500).json({
+                    message: "Failed to delete user photos."
+                });
+            }
+
+            pool.query(
+                "DELETE FROM reviews WHERE user_id = ?",
+                [userId],
+                (reviewsDeleteErr) => {
+                    if (reviewsDeleteErr) {
+                        console.error("Delete account reviews error:", reviewsDeleteErr);
+                        return res.status(500).json({
+                            message: "Failed to delete user reviews."
+                        });
+                    }
+
+                    pool.query(
+                        "DELETE FROM user_dishes WHERE user_id = ?",
+                        [userId],
+                        (userDishesDeleteErr) => {
+                            if (userDishesDeleteErr) {
+                                console.error("Delete account user_dishes error:", userDishesDeleteErr);
+                                return res.status(500).json({
+                                    message: "Failed to delete user dishes."
+                                });
+                            }
+
+                            pool.query(
+                                "DELETE FROM users WHERE id = ?",
+                                [userId],
+                                (deleteUserErr) => {
+                                    if (deleteUserErr) {
+                                        console.error("Delete account user error:", deleteUserErr);
+                                        return res.status(500).json({
+                                            message: "Failed to delete account."
+                                        });
+                                    }
+
+                                    req.session.destroy((sessionErr) => {
+                                        if (sessionErr) {
+                                            console.error("Session destroy after delete error:", sessionErr);
+                                        }
+
+                                        res.clearCookie("connect.sid");
+
+                                        return res.json({
+                                            message: "Account deleted successfully."
+                                        });
+                                    });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        }
+    );
 });
 
 /* ----------------- dish recommendation routes ------------------ */
