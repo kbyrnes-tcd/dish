@@ -1,4 +1,3 @@
-// profile logic
 const usernameEl = document.getElementById("profileUsername");
 const emailEl = document.getElementById("profileEmail");
 const avatarLetterEl = document.getElementById("avatarLetter");
@@ -16,12 +15,19 @@ function renderXp(userXp, userLevel) {
     const xpIntoLevel = safeXp % xpPerLevel;
     const progressPercent = (xpIntoLevel / xpPerLevel) * 100;
 
-    xpTextEl.textContent = `XP: ${xpIntoLevel}/${xpPerLevel}`;
-    levelTextEl.textContent = `Level ${safeLevel}`;
-    xpBarEl.style.width = `${progressPercent}%`;
+    if (xpTextEl) {
+        xpTextEl.textContent = `XP: ${xpIntoLevel}/${xpPerLevel}`;
+    }
+
+    if (levelTextEl) {
+        levelTextEl.textContent = `Level ${safeLevel}`;
+    }
+
+    if (xpBarEl) {
+        xpBarEl.style.width = `${progressPercent}%`;
+    }
 }
 
-// load current user
 async function loadProfile() {
     try {
         const response = await fetch("/api/auth/me", {
@@ -30,41 +36,53 @@ async function loadProfile() {
 
         const data = await response.json();
 
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
         if (!response.ok) {
-            throw new Error(data.message || "Not logged in");
+            throw new Error(data.message || "Failed to load profile.");
         }
 
         const user = data.user;
 
-        usernameEl.textContent = user.username;
-        emailEl.textContent = user.email;
-        avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
+        if (usernameEl) {
+            usernameEl.textContent = user.username;
+        }
+
+        if (emailEl) {
+            emailEl.textContent = user.email;
+        }
+
+        if (avatarLetterEl) {
+            avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
+        }
+
         renderXp(user.xp, user.level);
 
     } catch (error) {
         console.error("Profile load error:", error);
-
-        // redirect if not logged in
-        window.location.href = "login.html";
     }
 }
 
-// logout
-logoutBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
 
-    try {
-        await fetch("/api/auth/logout", {
-            method: "POST",
-            credentials: "include"
-        });
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
 
-        window.location.href = "welcome.html";
+        try {
+            await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            });
 
-    } catch (error) {
-        console.error("Logout error:", error);
-    }
-});
+            window.location.href = "welcome.html";
 
-// run on page load
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    });
+}
+
 loadProfile();
