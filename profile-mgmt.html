@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--SEO data here in the description-->
+    <meta name="description" content="A public feed for Dish"/> 
+    <title>Profile Management</title>
+    
+    <!--Bootstrap link-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!--CSS link-->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+
+<body>
+<div class="app"> <!--lock to mobile dimensions -->
+
+    <!--Header content-->
+    <div class="containerHeader">
+        <div class="logo">
+            <a href="index.html">
+            <img src="assets/dish-logo.png" alt="Lettering logo of the word Dish" width="60">
+            </a>
+        </div>
+        <div class="headerAvatar" id="headerAvatar">
+            <span class="headerAvatarLetter" id="headerAvatarLetter">?</span>
+        </div>
+    </div>
+
+    <!--body -->
+    <div class="containerMain">
+            
+            
+    </div>
+
+    <!--Footer content-->
+    <div class="containerFooter">
+        <div class="footerNav">
+
+            <!-- Feed -->
+            <a href="index.html" class="navItem">
+                <img src="assets/icon-feed.svg" alt="Feed icon">
+                <span>Feed</span>
+            </a>
+
+            <!-- New Dish -->
+            <a href="new-dish.html" class="navItem">
+                <img src="assets/icon-new.svg" alt="New dish icon">
+                <span>New Dish</span>
+            </a>
+
+            <!-- My Dishes -->
+            <a href="my-dishes.html" class="navItem active">
+                <img src="assets/icon-my-dishes.svg" alt="My dishes icon">
+                <span>My Dishes</span>
+            </a>
+
+            <!-- Profile -->
+            <a href="profile.html" class="navItem">
+                <img src="assets/icon-profile.svg" alt="Profile icon">
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/profile-mgmt.js"></script>
+
+</div> <!--lock to mobile dimensions - close div -->
+</body>
+</html>
