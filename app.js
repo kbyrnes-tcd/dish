@@ -121,14 +121,28 @@ app.use(express.static(__dirname, { index: false }));
 
 /* ----------------- helper functions ------------------ */
 
-function getXpValue(price) {
+function getDishXpValue(price) {
     if (price === "€") return 50;
     if (price === "€€") return 100;
     if (price === "€€€") return 150;
     return 0;
 }
 
-function completeDishAfterReview(userDishId, userId, res, reviewId) {
+function getPhotoXpValue(photoCount) {
+    const safePhotoCount = Math.min(Number(photoCount) || 0, 4);
+    return safePhotoCount * 50;
+}
+
+function getTotalReviewXp(price, photoCount) {
+    return getDishXpValue(price) + getPhotoXpValue(photoCount);
+}
+
+function getLevelFromXp(xp) {
+    const safeXp = Number(xp) || 0;
+    return Math.floor(safeXp / 250) + 1;
+}
+
+function completeDishAfterReview(userDishId, userId, res, reviewId, photoCount = 0) {
     pool.query(
         `
         SELECT 
@@ -158,7 +172,9 @@ function completeDishAfterReview(userDishId, userId, res, reviewId) {
             }
 
             const row = results[0];
-            const xpToAdd = getXpValue(row.restaurant_price);
+            const dishXp = getDishXpValue(row.restaurant_price);
+            const photoXp = getPhotoXpValue(photoCount);
+            const xpToAdd = getTotalReviewXp(row.restaurant_price, photoCount);
 
             pool.query(
                 `
@@ -180,10 +196,12 @@ function completeDishAfterReview(userDishId, userId, res, reviewId) {
                     pool.query(
                         `
                         UPDATE users
-                        SET user_xp = user_xp + ?
+                        SET 
+                            user_xp = user_xp + ?,
+                            user_level = FLOOR((user_xp + ?) / 250) + 1
                         WHERE id = ?
                         `,
-                        [xpToAdd, userId],
+                        [xpToAdd, xpToAdd, userId],
                         (xpErr) => {
                             if (xpErr) {
                                 console.error("XP update after review error:", xpErr);
@@ -195,7 +213,9 @@ function completeDishAfterReview(userDishId, userId, res, reviewId) {
                             return res.status(201).json({
                                 message: "Review posted successfully.",
                                 reviewId,
-                                xpAdded: xpToAdd
+                                xpAdded: xpToAdd,
+                                dishXpAdded: dishXp,
+                                photoXpAdded: photoXp
                             });
                         }
                     );
@@ -1163,7 +1183,7 @@ app.patch("/api/user-dishes/:id/complete", (req, res) => {
             }
 
             const row = results[0];
-            const xpToAdd = getXpValue(row.restaurant_price);
+            const xpToAdd = getDishXpValue(row.restaurant_price);
 
             pool.query(
                 `
@@ -1185,10 +1205,12 @@ app.patch("/api/user-dishes/:id/complete", (req, res) => {
                     pool.query(
                         `
                         UPDATE users
-                        SET user_xp = user_xp + ?
+                        SET 
+                            user_xp = user_xp + ?,
+                            user_level = FLOOR((user_xp + ?) / 250) + 1
                         WHERE id = ?
                         `,
-                        [xpToAdd, userId],
+                        [xpToAdd, xpToAdd, userId],
                         (xpErr) => {
                             if (xpErr) {
                                 console.error("XP update error:", xpErr);
@@ -1284,15 +1306,16 @@ app.post("/api/reviews", upload.array("photos", 4), (req, res) => {
                     }
 
                     const uploadedFiles = req.files || [];
+                    const photoCount = uploadedFiles.length;
 
-                    if (uploadedFiles.length > 4) {
+                    if (photoCount > 4) {
                         return res.status(400).json({
                             message: "You can upload a maximum of 4 photos."
                         });
                     }
 
-                    if (uploadedFiles.length === 0) {
-                        return completeDishAfterReview(user_dish_id, userId, res, reviewResult.insertId);
+                    if (photoCount === 0) {
+                        return completeDishAfterReview(user_dish_id, userId, res, reviewResult.insertId, photoCount);
                     }
 
                     const photoValues = uploadedFiles.map((file) => [

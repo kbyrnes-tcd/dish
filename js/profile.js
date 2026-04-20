@@ -4,6 +4,23 @@ const emailEl = document.getElementById("profileEmail");
 const avatarLetterEl = document.getElementById("avatarLetter");
 const logoutBtn = document.getElementById("logoutBtn");
 
+const xpTextEl = document.getElementById("profileXpText");
+const levelTextEl = document.getElementById("profileLevelText");
+const xpBarEl = document.getElementById("profileXpBar");
+
+function renderXp(userXp, userLevel) {
+    const xpPerLevel = 250;
+    const safeXp = Number(userXp) || 0;
+    const safeLevel = Number(userLevel) || 1;
+
+    const xpIntoLevel = safeXp % xpPerLevel;
+    const progressPercent = (xpIntoLevel / xpPerLevel) * 100;
+
+    xpTextEl.textContent = `XP: ${xpIntoLevel}/${xpPerLevel}`;
+    levelTextEl.textContent = `Level ${safeLevel}`;
+    xpBarEl.style.width = `${progressPercent}%`;
+}
+
 // load current user
 async function loadProfile() {
     try {
@@ -22,6 +39,7 @@ async function loadProfile() {
         usernameEl.textContent = user.username;
         emailEl.textContent = user.email;
         avatarLetterEl.textContent = user.username.charAt(0).toUpperCase();
+        renderXp(user.xp, user.level);
 
     } catch (error) {
         console.error("Profile load error:", error);
