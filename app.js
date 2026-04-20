@@ -28,8 +28,11 @@ const pool = mysql.createPool({
 
 // Allow requests from Live Server frontend
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    const origin = req.get("origin");
+    if (origin === "http://127.0.0.1:5500" || origin === "http://localhost:5500" || origin === "http://127.0.0.1:8000" || origin === "http://localhost:8000") {
+        res.header("Access-Control-Allow-Origin", origin);
+    }
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Credentials", "true");
 
@@ -349,6 +352,199 @@ app.post("/api/auth/login", async (req, res) => {
             message: "Unexpected server error."
         });
     }
+});
+
+//manage profile routes
+app.get("/user/profile", requireAuth, (req, res) => {
+    pool.query(
+        `SELECT id, username, user_email, user_xp, user_level, created_at
+         FROM users
+         WHERE id = ?`,
+        [req.session.userId],
+        (err, results) => {
+            if (err) {
+                console.error("Get profile error:", err);
+                return res.status(500).json({ message: "Server error while loading profile." });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "User not found." });
+            }
+
+            const user = results[0];
+            res.json({
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.user_email,
+                    xp: user.user_xp,
+                    level: user.user_level,
+                    created_at: user.created_at
+                }
+            });
+        }
+    );
+});
+
+//update username and email
+app.put("/user/profile", requireAuth, (req, res) => {
+    let { username, email } = req.body;
+
+    username = username?.trim();
+    email = email?.trim().toLowerCase();
+
+    if (!username || !email) {
+        return res.status(400).json({
+            message: "Username and email are required."
+        });
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernamePattern = /^[A-Za-z0-9_-]+$/;
+    if (!usernamePattern.test(username)) {
+        return res.status(400).json({
+            message: "Username can only contain letters, numbers, hyphens, and underscores."
+        });
+    }
+    if (!emailPattern.test(email)) {
+        return res.status(400).json({
+            message: "Please enter a valid email address."
+        });
+    }
+
+    pool.query(
+        `SELECT id
+         FROM users
+         WHERE (username = ? OR user_email = ?) AND id != ?`,
+        [username, email, req.session.userId],
+        (checkErr, existing) => {
+            if (checkErr) {
+                console.error("Profile duplicate check error:", checkErr);
+                return res.status(500).json({ message: "Server error while checking profile details." });
+            }
+            if (existing.length > 0) {
+                return res.status(400).json({
+                    message: "That username or email is already in use."
+                });
+            }
+
+            pool.query(
+                `UPDATE users
+                 SET username = ?, user_email = ?
+                 WHERE id = ?`,
+                [username, email, req.session.userId],
+                (updateErr) => {
+                    if (updateErr) {
+                        console.error("Profile update error:", updateErr);
+                        return res.status(500).json({ message: "Server error while updating profile." });
+                    }
+                    return res.json({
+                        message: "Profile updated successfully."
+                    });
+                }
+            );
+        }
+    );
+});
+
+//account password update
+app.put("/user/password", requireAuth, (req, res) => {
+    let { currentPassword, newPassword, confirmPassword } = req.body;
+
+    currentPassword = currentPassword?.trim();
+    newPassword = newPassword?.trim();
+    confirmPassword = confirmPassword?.trim();
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({
+            message: "All password fields are required."
+        });
+    }
+    if (newPassword.length < 6) {
+        return res.status(400).json({
+            message: "New password must be at least 6 characters long."
+        });
+    }
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({
+            message: "New passwords do not match."
+        });
+    }
+
+    pool.query(
+        "SELECT user_password FROM users WHERE id = ?",
+        [req.session.userId],
+        async (err, results) => {
+            if (err) {
+                console.error("Password lookup error:", err);
+                return res.status(500).json({ message: "Server error while checking password." });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: "User not found." });
+            }
+            try {
+                const isMatch = await bcrypt.compare(currentPassword, results[0].user_password);
+                if (!isMatch) {
+                    return res.status(400).json({
+                        message: "Current password is incorrect."
+                    });
+                }
+
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                pool.query(
+                    "UPDATE users SET user_password = ? WHERE id = ?",
+                    [hashedPassword, req.session.userId],
+                    (updateErr) => {
+                        if (updateErr) {
+                            console.error("Password update error:", updateErr);
+                            return res.status(500).json({ message: "Server error while updating password." });
+                        }
+                        return res.json({
+                            message: "Password updated successfully."
+                        });
+                    }
+                );
+            } catch (hashErr) {
+                console.error("Password hashing error:", hashErr);
+                return res.status(500).json({ message: "Server error while securing password." });
+            }
+        }
+    );
+});
+
+//delete account
+app.delete("/user", requireAuth, (req, res) => {
+    const userId = req.session.userId;
+
+    pool.query("DELETE FROM photos WHERE user_id = ?", [userId], (photoErr) => {
+        if (photoErr) {
+            console.error("Delete photos error:", photoErr);
+            return res.status(500).json({ message: "Could not delete account data." });
+        }
+        pool.query("DELETE FROM reviews WHERE user_id = ?", [userId], (reviewErr) => {
+            if (reviewErr) {
+                console.error("Delete reviews error:", reviewErr);
+                return res.status(500).json({ message: "Could not delete account data." });
+            }
+            pool.query("DELETE FROM user_dishes WHERE user_id = ?", [userId], (dishErr) => {
+                if (dishErr) {
+                    console.error("Delete user dishes error:", dishErr);
+                    return res.status(500).json({ message: "Could not delete account data." });
+                }
+                pool.query("DELETE FROM users WHERE id = ?", [userId], (userErr) => {
+                    if (userErr) {
+                        console.error("Delete user error:", userErr);
+                        return res.status(500).json({ message: "Could not delete account." });
+                    }
+
+                    req.session.destroy(() => {
+                        return res.json({
+                            message: "Account deleted successfully."
+                        });
+                    });
+                });
+            });
+        });
+    });
 });
 
 // Recommend a dish

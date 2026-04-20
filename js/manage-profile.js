@@ -92,8 +92,8 @@ profileForm.addEventListener("submit", async (e) => {
             avatarPreviewLetter.textContent = usernameValue.charAt(0).toUpperCase();
         }
     } catch (error) {
-        console.error("Profile update error:", error);
-        setMessage(profileMessage, "Something went wrong.", "errorMessage");
+    console.error("Profile update error:", error);
+    setMessage(profileMessage, error.message || "Something went wrong.", "errorMessage");
     }
 });
 
