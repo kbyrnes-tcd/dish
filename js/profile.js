@@ -26,7 +26,7 @@ function renderXp(userXp, userLevel) {
     });
 
     if (xpTextEl) {
-        xpTextEl.textContent = `XP: ${safeXp} total • ${xpIntoLevel}/${xpPerLevel}`;
+        xpTextEl.textContent = `${xpIntoLevel} / ${xpPerLevel} XP`;
     }
 
     if (levelTextEl) {
