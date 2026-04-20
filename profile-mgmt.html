@@ -31,66 +31,64 @@
             </div>
         </div>
 
-        <!-- Body -->
+        <!--body -->
         <div class="containerMain">
 
-            <div class="profileSection">
-                <h1>Settings</h1>
-                <p class="subtitle">Manage your app preferences.</p>
+        <!-- Update Profile -->
+        <div class="profileSection">
+            <h1>Manage Profile</h1>
+            <p class="subtitle">Update your account details.</p>
 
-                <form id="settingsForm">
-                    <div class="settingsToggleRow">
-                        <div class="settingsToggleText">
-                            <label for="notificationsToggle" class="profileLabel">Notifications</label>
-                            <p class="profileDeleteText">Receive reminders and app updates.</p>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input settingsSwitch" type="checkbox" id="notificationsToggle">
-                        </div>
-                    </div>
+            <form id="profileDetailsForm">
+                <label class="profileLabel">Username</label>
+                <input type="text" id="profileUsernameInput" class="profileInput">
 
-                    <div class="profileDivider"></div>
+                <label class="profileLabel">Email</label>
+                <input type="email" id="profileEmailInput" class="profileInput">
 
-                    <div class="settingsToggleRow">
-                        <div class="settingsToggleText">
-                            <label for="privacyToggle" class="profileLabel">Privacy</label>
-                            <p class="profileDeleteText">Keep your profile more private.</p>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input settingsSwitch" type="checkbox" id="privacyToggle">
-                        </div>
-                    </div>
-
-                    <div class="profileDivider"></div>
-
-                    <label for="themeSelect" class="profileLabel">Theme</label>
-                    <select id="themeSelect" class="profileInput">
-                        <option value="light">Default</option>
-                    </select>
-
-                    <div class="profileDivider"></div>
-
-                    <div class="settingsToggleRow">
-                        <div class="settingsToggleText">
-                            <label for="motionToggle" class="profileLabel">Reduced Motion</label>
-                            <p class="profileDeleteText">Use fewer visual animations.</p>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input settingsSwitch" type="checkbox" id="motionToggle">
-                        </div>
-                    </div>
-
-                    <button type="button" class="profileButton" id="saveSettingsBtn">Save Settings</button>
-                    <p id="settingsMessage" class="profileMessage"></p>
-                </form>
-            </div>
-
-            <div class="profileDivider"></div>
-
-            <div class="profileSection">
-                <a href="profile.html" class="profileButton settingsBackLink">Back to Profile</a>
-            </div>
+                <button type="submit" class="profileButton">Save Details</button>
+                <p id="profileDetailsMessage" class="profileMessage"></p>
+            </form>
         </div>
+
+        <div class="profileDivider"></div>
+
+        <!-- Change Password -->
+        <div class="profileSection">
+            <h2>Change Password</h2>
+
+            <form id="passwordForm">
+                <label class="profileLabel">Current Password</label>
+                <input type="password" id="currentPassword" class="profileInput">
+
+                <label class="profileLabel">New Password</label>
+                <input type="password" id="newPassword" class="profileInput">
+
+                <label class="profileLabel">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="profileInput">
+
+                <button type="submit" class="profileButton">Update Password</button>
+                <p id="passwordMessage" class="profileMessage"></p>
+            </form>
+        </div>
+
+        <div class="profileDivider"></div>
+
+        <!-- Delete Account -->
+        <div class="profileSection">
+            <h2>Delete Account</h2>
+            <p class="profileDeleteText">
+                This will permanently delete your account.
+            </p>
+
+            <button id="deleteAccountBtn" class="profileDeleteButton">
+                Delete Account
+            </button>
+
+            <p id="deleteAccountMessage" class="profileMessage"></p>
+        </div>
+
+    </div>
 
     <!--Footer content-->
     <div class="containerFooter">
@@ -125,7 +123,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="/js/settings.js"></script>
+    <script src="/js/profile-mgmt.js"></script>
 
 </div> <!--lock to mobile dimensions - close div -->
 </body>
