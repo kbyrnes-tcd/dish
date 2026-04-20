@@ -1769,3 +1769,13 @@ p {
 .switch input:checked + .slider:before {
     transform: translateX(20px);
 }
+
+.manageProfileSection {
+    margin-bottom: 30px;
+}
+
+#settingsMessage {
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 18px;
+}
