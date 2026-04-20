@@ -1234,6 +1234,10 @@ p {
     margin-bottom: 8px;
 }
 
+.xp-text-row span:first-child {
+    min-width: 95px;
+}
+
 .progress-bar-bg {
     height: 10px;
     background-color: #d1d1d1;
@@ -1380,8 +1384,7 @@ p {
 }
 
 .sparkPop,
-.ribbonPop,
-.foodPop {
+.ribbonPop{
     position: absolute;
     left: var(--x);
     top: var(--y);
@@ -1402,24 +1405,6 @@ p {
     border-radius: 3px;
     background: var(--color);
     animation: popSpark 1.25s ease-out forwards;
-}
-
-.foodPop {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-    animation: popFood 1.65s ease-out forwards;
-}
-
-.foodPop img {
-    width: 20px;
-    height: 20px;
-    display: block;
 }
 
 .continueButton {

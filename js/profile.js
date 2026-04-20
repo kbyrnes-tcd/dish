@@ -24,135 +24,6 @@ let readyTimer;
 
 const sparkColors = ["#ffd34d", "#FF6128", "#7bc67b", "#5db7de", "#f47aa3"];
 
-const foods = [
-    "Apple.svg",
-    "Asparagus.svg",
-    "Avocado.svg",
-    "Baby Bottle.svg",
-    "Bacon.svg",
-    "Banana Split.svg",
-    "Banana.svg",
-    "Bar.svg",
-    "Bavarian Beer Mug.svg",
-    "Bavarian Pretzel.svg",
-    "Bavarian Wheat Beer.svg",
-    "Beer Bottle.svg",
-    "Beer Can.svg",
-    "Beer.svg",
-    "Beet.svg",
-    "Birthday Cake.svg",
-    "Bottle of Water.svg",
-    "Bread.svg",
-    "Broccoli.svg",
-    "Cabbage.svg",
-    "Cafe.svg",
-    "Carrot.svg",
-    "Celery.svg",
-    "Cheese.svg",
-    "Cherry.svg",
-    "Chili Pepper.svg",
-    "Cinnamon Roll.svg",
-    "Citrus.svg",
-    "Cocktail.svg",
-    "Coconut Cocktail.svg",
-    "Coffee Pot.svg",
-    "Coffee to Go.svg",
-    "Cookies.svg",
-    "Corn.svg",
-    "Cotton Candy.svg",
-    "Crab.svg",
-    "Cucumber.svg",
-    "Cup.svg",
-    "Cupcake.svg",
-    "Dim Sum.svg",
-    "Dolmades.svg",
-    "Doughnut.svg",
-    "Dragon Fruit.svg",
-    "Durian.svg",
-    "Eggplant.svg",
-    "Eggs.svg",
-    "Espresso Cup.svg",
-    "Fish Food.svg",
-    "Food And Wine.svg",
-    "French Fries.svg",
-    "French Press.svg",
-    "Garlic.svg",
-    "Grapes.svg",
-    "Hamburger.svg",
-    "Hazelnut.svg",
-    "Honey.svg",
-    "Hops.svg",
-    "Hot Chocolate.svg",
-    "Hot Dog.svg",
-    "Ice Cream Cone.svg",
-    "Ingredients.svg",
-    "Kebab.svg",
-    "Kiwi.svg",
-    "Kohlrabi.svg",
-    "Leek.svg",
-    "Lettuce.svg",
-    "Macaron.svg",
-    "Melon.svg",
-    "Milk.svg",
-    "Nachos.svg",
-    "Natural Food.svg",
-    "Noodles.svg",
-    "Nut.svg",
-    "Octopus.svg",
-    "Olive Oil.svg",
-    "Olive.svg",
-    "Onion.svg",
-    "Organic Food.svg",
-    "Pancake.svg",
-    "Paprika.svg",
-    "Pastry Bag.svg",
-    "Peach.svg",
-    "Peanuts.svg",
-    "Pear.svg",
-    "Peas.svg",
-    "Pepper Shaker.svg",
-    "Pie.svg",
-    "Pineapple.svg",
-    "Pizza.svg",
-    "Plum.svg",
-    "Pomegranate.svg",
-    "Porridge.svg",
-    "Potato.svg",
-    "Prawn.svg",
-    "Pretzel.svg",
-    "Quesadilla.svg",
-    "Rack of Lamb.svg",
-    "Radish.svg",
-    "Raspberry.svg",
-    "Rice Bowl.svg",
-    "Sack of Flour.svg",
-    "Salt Shaker.svg",
-    "Sauce.svg",
-    "Sesame.svg",
-    "Spaghetti.svg",
-    "Spoon of Sugar.svg",
-    "Steak.svg",
-    "Strawberry.svg",
-    "Sugar Cube.svg",
-    "Sugar.svg",
-    "Sushi.svg",
-    "Sweet Potato.svg",
-    "Taco.svg",
-    "Tapas.svg",
-    "Tea Cup.svg",
-    "Tea.svg",
-    "Teapot.svg",
-    "Thanksgiving.svg",
-    "Tin Can.svg",
-    "Tomato.svg",
-    "Vegan Food.svg",
-    "Vegan Symbol.svg",
-    "Watermelon.svg",
-    "Wine Bottle.svg",
-    "Wine Glass.svg",
-    "Wrap.svg"
-];
-
 function getLevelFromXp(xp) {
     return Math.floor((Number(xp) || 0) / XP_PER_LEVEL) + 1;
 }
@@ -189,8 +60,18 @@ function renderXpAtValue(totalXp) {
     renderXp(totalXp, level);
 }
 
+function setXpBarOnly(totalXp) {
+    const progressPercent = getProgressPercent(totalXp);
+
+    if (xpBarEl) {
+        xpBarEl.style.width = `${progressPercent}%`;
+    }
+}
+
 function animateXpGain(startXp, endXp, duration = 1400) {
     const startTime = performance.now();
+
+    renderXpAtValue(startXp);
 
     function step(currentTime) {
         const elapsed = currentTime - startTime;
@@ -198,7 +79,7 @@ function animateXpGain(startXp, endXp, duration = 1400) {
         const eased = 1 - Math.pow(1 - progress, 3);
         const currentXp = startXp + (endXp - startXp) * eased;
 
-        renderXpAtValue(currentXp);
+        setXpBarOnly(currentXp);
 
         if (progress < 1) {
             requestAnimationFrame(step);
@@ -242,33 +123,6 @@ function popSpark() {
     }
 }
 
-function popFood() {
-    if (!popLayer) return;
-
-    clearPops();
-
-    for (let i = 0; i < 18; i += 1) {
-        const item = document.createElement("span");
-        const food = foods[Math.floor(Math.random() * foods.length)];
-        const icon = document.createElement("img");
-
-        item.className = "foodPop";
-        icon.src = `assets/food-icons/${encodeURIComponent(food)}`;
-        icon.alt = "";
-        item.appendChild(icon);
-        item.style.setProperty("--x", `${66 + Math.random() * 22}%`);
-        item.style.setProperty("--y", `${39 + Math.random() * 18}%`);
-        item.style.setProperty("--dx", `${Math.round((Math.random() - 0.5) * 76)}px`);
-        item.style.setProperty("--dy", `${Math.round(-24 - Math.random() * 38)}px`);
-        item.style.setProperty("--turn", `${Math.round((Math.random() - 0.5) * 18)}deg`);
-        popLayer.appendChild(item);
-    }
-
-    if (tapHint) {
-        tapHint.textContent = "Congratulations! Tap the turtle";
-    }
-}
-
 function showLevelUp(startLevel, nextLevel) {
     if (!levelOverlay) return;
 
@@ -301,7 +155,7 @@ function showLevelUp(startLevel, nextLevel) {
         levelOverlay.classList.add("ready");
 
         if (tapHint) {
-            tapHint.textContent = "Congratulations! Tap the turtle";
+            tapHint.textContent = "Congratulations!";
         }
 
         popSpark();
@@ -395,10 +249,6 @@ if (logoutBtn) {
             console.error("Logout error:", error);
         }
     });
-}
-
-if (turtle) {
-    turtle.addEventListener("click", popFood);
 }
 
 if (levelClose) {
