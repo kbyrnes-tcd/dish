@@ -93,7 +93,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/js", express.static(path.join(__dirname, "js")));
-app.use("/uploads", express.static(uploadsDir));
 
 /* ----------------- pages ------------------ */
 
