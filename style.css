@@ -1642,7 +1642,7 @@ p {
 .profileDeleteButton {
     width: 100%;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 25px;
     border: none;
     background-color: #e63946;
     color: white;
