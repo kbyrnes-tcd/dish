@@ -70,8 +70,18 @@ function setXpBarOnly(totalXp) {
 
 function animateXpGain(startXp, endXp, duration = 1400) {
     const startTime = performance.now();
+    const startLevel = getLevelFromXp(startXp);
+    const endLevel = getLevelFromXp(endXp);
 
-    renderXpAtValue(startXp);
+    if (xpTextEl) {
+        xpTextEl.textContent = `${getXpIntoLevel(startXp)} / ${XP_PER_LEVEL} XP`;
+    }
+
+    if (levelTextEl) {
+        levelTextEl.textContent = `Level ${startLevel}`;
+    }
+
+    setXpBarOnly(startXp);
 
     function step(currentTime) {
         const elapsed = currentTime - startTime;
@@ -84,7 +94,15 @@ function animateXpGain(startXp, endXp, duration = 1400) {
         if (progress < 1) {
             requestAnimationFrame(step);
         } else {
-            renderXpAtValue(endXp);
+            if (xpTextEl) {
+                xpTextEl.textContent = `${getXpIntoLevel(endXp)} / ${XP_PER_LEVEL} XP`;
+            }
+
+            if (levelTextEl) {
+                levelTextEl.textContent = `Level ${endLevel}`;
+            }
+
+            setXpBarOnly(endXp);
         }
     }
 
@@ -190,7 +208,7 @@ async function loadProfile() {
 
         const user = data.user;
         const currentXp = Number(user.xp) || 0;
-        const currentLevel = Number(user.level) || getLevelFromXp(currentXp);
+        const currentLevel = getLevelFromXp(currentXp);
 
         if (usernameEl) {
             usernameEl.textContent = user.username;
