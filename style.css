@@ -1655,3 +1655,37 @@ p {
     color: #878787;
     margin-bottom: 10px;
 }
+
+/* ----------------- settings ---------------------- */
+/* ------------------------------------------------- */
+
+.settingsToggleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.settingsToggleText {
+    flex: 1;
+}
+
+.settingsToggleRow .profileLabel {
+    margin-bottom: 4px;
+}
+
+.settingsToggleRow .profileDeleteText {
+    margin-bottom: 0;
+}
+
+.settingsSwitch {
+    margin-top: 2px;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.settingsBackLink {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
