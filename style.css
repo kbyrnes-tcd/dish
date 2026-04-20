@@ -213,12 +213,13 @@ p {
     justify-content: center;
     flex-shrink: 0;
     overflow: hidden;
+    margin-right: 15px;
 }
 
 .profileAvatarLetter {
     font-family: 'Poppins', Arial, sans-serif;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 500;
     color: #777;
     text-transform: uppercase;
     line-height: 1;
